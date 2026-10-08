@@ -1,0 +1,848 @@
+{
+  "id": "fake-site",
+  "name": "Fake site",
+  "people": [
+    {
+      "id": "S01",
+      "name": "S01"
+    },
+    {
+      "id": "S02",
+      "name": "S02"
+    },
+    {
+      "id": "S03",
+      "name": "S03"
+    },
+    {
+      "id": "S04",
+      "name": "S04"
+    },
+    {
+      "id": "S05",
+      "name": "S05"
+    },
+    {
+      "id": "S06",
+      "name": "S06"
+    },
+    {
+      "id": "S07",
+      "name": "S07"
+    },
+    {
+      "id": "S08",
+      "name": "S08"
+    },
+    {
+      "id": "S09",
+      "name": "S09"
+    },
+    {
+      "id": "S10",
+      "name": "S10"
+    },
+    {
+      "id": "S11",
+      "name": "S11"
+    },
+    {
+      "id": "S12",
+      "name": "S12"
+    },
+    {
+      "id": "S13",
+      "name": "S13"
+    },
+    {
+      "id": "S14",
+      "name": "S14"
+    },
+    {
+      "id": "S15",
+      "name": "S15"
+    },
+    {
+      "id": "S16",
+      "name": "S16"
+    },
+    {
+      "id": "S17",
+      "name": "S17"
+    },
+    {
+      "id": "S18",
+      "name": "S18"
+    },
+    {
+      "id": "S19",
+      "name": "S19"
+    },
+    {
+      "id": "S20",
+      "name": "S20"
+    }
+  ],
+  "sessions": [
+    {
+      "number": 1,
+      "date": "",
+      "activity": "",
+      "present": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19",
+        "S20"
+      ],
+      "answers": [
+        {
+          "personId": "S01",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S02",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S03",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S04",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S05",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S06",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S07",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "N",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S08",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S09",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S10",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S11",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S12",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S13",
+          "q4": null,
+          "q5": null,
+          "stayedWhole": "",
+          "firstTime": ""
+        },
+        {
+          "personId": "S14",
+          "q4": null,
+          "q5": null,
+          "stayedWhole": "",
+          "firstTime": ""
+        },
+        {
+          "personId": "S15",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S16",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S17",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S18",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S19",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        },
+        {
+          "personId": "S20",
+          "q4": 4,
+          "q5": 3,
+          "stayedWhole": "Y",
+          "firstTime": "Y"
+        }
+      ],
+      "ticks": [
+        {
+          "from": "S01",
+          "to": "S02",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S03",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S04",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S01",
+          "to": "S05",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S06",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S07",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S01",
+          "to": "S08",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S10",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S11",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S12",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S02",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S02",
+          "to": "S03",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S03",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S03",
+          "to": "S02",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S04",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S04",
+          "to": "S05",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S05",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S05",
+          "to": "S04",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S06",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S06",
+          "to": "S07",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S07",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S07",
+          "to": "S06",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S08",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S08",
+          "to": "S09",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S09",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S10",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S10",
+          "to": "S11",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S11",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S11",
+          "to": "S10",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S12",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S12",
+          "to": "S13",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S18",
+          "to": "S17",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S19",
+          "to": "S20",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S20",
+          "to": "S19",
+          "workedWith": true,
+          "talkedTo": true
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "date": "",
+      "activity": "",
+      "present": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "S16"
+      ],
+      "answers": [
+        {
+          "personId": "S01",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S02",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S03",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S04",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S05",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S06",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S07",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S08",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S09",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S10",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S11",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "N",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S12",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S13",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S14",
+          "q4": null,
+          "q5": null,
+          "stayedWhole": "",
+          "firstTime": ""
+        },
+        {
+          "personId": "S15",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        },
+        {
+          "personId": "S16",
+          "q4": 5,
+          "q5": 4,
+          "stayedWhole": "Y",
+          "firstTime": "N"
+        }
+      ],
+      "ticks": [
+        {
+          "from": "S01",
+          "to": "S02",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S01",
+          "to": "S03",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S04",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S05",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S01",
+          "to": "S06",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S07",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S08",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S01",
+          "to": "S09",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S10",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S01",
+          "to": "S11",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S01",
+          "to": "S12",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S02",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S02",
+          "to": "S03",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S03",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S03",
+          "to": "S02",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S03",
+          "to": "S06",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S04",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S04",
+          "to": "S02",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S04",
+          "to": "S05",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S05",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S05",
+          "to": "S04",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S05",
+          "to": "S07",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S06",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S06",
+          "to": "S03",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S06",
+          "to": "S07",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S07",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S07",
+          "to": "S05",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S07",
+          "to": "S06",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S08",
+          "to": "S01",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S08",
+          "to": "S09",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S08",
+          "to": "S10",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S09",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S09",
+          "to": "S08",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S09",
+          "to": "S11",
+          "workedWith": false,
+          "talkedTo": true
+        },
+        {
+          "from": "S10",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S10",
+          "to": "S08",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S10",
+          "to": "S11",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S11",
+          "to": "S09",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S11",
+          "to": "S10",
+          "workedWith": true,
+          "talkedTo": false
+        },
+        {
+          "from": "S12",
+          "to": "S01",
+          "workedWith": true,
+          "talkedTo": true
+        },
+        {
+          "from": "S13",
+          "to": "S12",
+          "workedWith": false,
+          "talkedTo": true
+        }
+      ]
+    }
+  ]
+}

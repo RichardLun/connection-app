@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connection app</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 40rem;
+      margin: 3rem auto;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Connection app</h1>
+  <p>This is the starter page. The real screens come after the backend is done.</p>
+  <p id="status">Checking the database connection...</p>
+
+  <script type="module">
+    import { supabase } from "./lib/supabase.js";
+
+    const status = document.getElementById("status");
+    const { count, error } = await supabase
+      .from("groups")
+      .select("*", { count: "exact", head: true });
+
+    status.textContent = error
+      ? `Couldn't reach the database: ${error.message}`
+      : `Connected to the database. Groups saved so far: ${count}.`;
+  </script>
+</body>
+</html>
