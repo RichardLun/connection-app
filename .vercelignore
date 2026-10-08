@@ -1,0 +1,4 @@
+# Never upload local secrets or tool folders to Vercel.
+.env*
+supabase/.temp
+node_modules
