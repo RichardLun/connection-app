@@ -55,7 +55,7 @@ To check it worked, open a new terminal and run `node --version`. You should see
 Cloning means downloading your own copy of the project from GitHub onto your computer. Git remembers where the copy came from. Later, that lets you pull down other people's changes and push your own back up.
 
 1. Open VS Code. On the Welcome page, click "Clone Git Repository". If you don't see it, press Cmd+Shift+P, type "Git: Clone", and press Enter.
-2. Paste the repo link I send you, and press Enter.
+2. Paste this link, and press Enter: https://github.com/RichardLun/connection-app
 3. Pick a folder to save the project in. Documents is fine. Sign in to GitHub if VS Code asks you to.
 4. When VS Code asks whether to open the cloned repository, click Open.
 
@@ -86,9 +86,9 @@ npm run dev
 
 ## 8. Check that you can see everything
 
-- **GitHub:** open the repo link I sent you. You should see the project's files.
+- **GitHub:** open https://github.com/RichardLun/connection-app. You should see the project's files.
 - **Supabase:** go to supabase.com and open the connection-app project. Click Table Editor in the left sidebar. You should see six tables: groups, people, sessions, attendance, answers and ticks. They're empty for now.
-- **Vercel:** open the live site link I send you. It should show the same starter page you saw on your computer, also saying "Connected to the database".
+- **Vercel:** open the live site at https://connection-app-alpha.vercel.app. It should show the same starter page you saw on your computer, also saying "Connected to the database".
 - **Claude Code:** with the project open in VS Code, open Claude Code and ask "What is this project, and what's in it so far?" It should read the files and describe them.
 
 ## Done
