@@ -1,6 +1,4 @@
-# connection-app
-
-The name is still to be decided.
+# Connected-TBD
 
 A web app that helps youth group leaders see whether the kids in their group are connecting. At the end of a session, each kid checks in on the leader's device. The leader then sees who connected with whom, and who might need help. Data is saved to a Supabase database.
 
