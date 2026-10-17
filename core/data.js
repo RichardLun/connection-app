@@ -3,7 +3,7 @@
 // checks error itself. Otherwise a failed save would look like it worked.
 import { supabase } from "../lib/supabase.js";
 
-export async function createGroup(name, { ageRange, programType }) {
+export async function createGroup(name, { ageRange, programType } = {}) {
   const { data, error } = await supabase
     .from("groups")
     .insert({ name, age_range: ageRange, program_type: programType })
