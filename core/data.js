@@ -98,3 +98,62 @@ export async function setPresent(sessionId, personIds) {
     if (error) throw error;
   }
 }
+
+export async function saveCheckIn(sessionId, {
+  personId, workedWith, talkedTo, knewBefore = [], q4, q5, stayedWhole, firstTime,
+}) {
+  const tapped = [...new Set([...workedWith, ...talkedTo, ...knewBefore])];
+  const ticks = tapped.map((id) => ({
+    session_id: sessionId,
+    from_person: personId,
+    to_person: id,
+    worked_with: workedWith.includes(id),
+    talked_to: talkedTo.includes(id),
+    knew_before: knewBefore.includes(id),
+  }));
+
+  const { data: rows, error: readError } = await supabase
+    .from("ticks")
+    .select("to_person")
+    .eq("session_id", sessionId)
+    .eq("from_person", personId);
+  if (readError) throw readError;
+  const toRemove = rows.map((row) => row.to_person).filter((id) => !tapped.includes(id));
+
+  // Upsert so a second check-in updates the old ticks instead of adding
+  // copies. Save before removing, for the same reason as in setPresent.
+  if (ticks.length > 0) {
+    const { error } = await supabase
+      .from("ticks")
+      .upsert(ticks, { onConflict: "session_id,from_person,to_person" });
+    if (error) throw error;
+  }
+  if (toRemove.length > 0) {
+    const { error } = await supabase
+      .from("ticks")
+      .delete()
+      .eq("session_id", sessionId)
+      .eq("from_person", personId)
+      .in("to_person", toRemove);
+    if (error) throw error;
+  }
+
+  // Saved last, so an answer row means the whole check-in made it.
+  // Missing values must be sent as null or "", because an upsert leaves out
+  // undefined fields and would keep the old check-in's value.
+  // created_at isn't sent, so it keeps the time of the first check-in.
+  const { error } = await supabase
+    .from("answers")
+    .upsert(
+      {
+        session_id: sessionId,
+        person_id: personId,
+        q4: q4 ?? null,
+        q5: q5 ?? null,
+        stayed_whole: stayedWhole ?? "",
+        first_time: firstTime ?? "",
+      },
+      { onConflict: "session_id,person_id" },
+    );
+  if (error) throw error;
+}
