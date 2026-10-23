@@ -100,7 +100,7 @@ export async function setPresent(sessionId, personIds) {
 }
 
 export async function saveCheckIn(sessionId, {
-  personId, workedWith, talkedTo, knewBefore = [], q4, q5, stayedWhole, firstTime,
+  personId, workedWith = [], talkedTo = [], knewBefore = [], q4, q5, stayedWhole, firstTime,
 }) {
   const tapped = [...new Set([...workedWith, ...talkedTo, ...knewBefore])];
   const ticks = tapped.map((id) => ({
@@ -156,4 +156,78 @@ export async function saveCheckIn(sessionId, {
       { onConflict: "session_id,person_id" },
     );
   if (error) throw error;
+}
+
+// Fetches one table's rows for many sessions in a single request, instead of
+// one request per session.
+async function rowsForSessions(table, sessionIds) {
+  // A group with no sessions yet has nothing to fetch.
+  if (sessionIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from(table)
+    .select()
+    .in("session_id", sessionIds);
+  if (error) throw error;
+  return data;
+}
+
+export async function loadGroup(groupId) {
+  const { data: group, error: groupError } = await supabase
+    .from("groups")
+    .select()
+    .eq("id", groupId)
+    .single();
+  if (groupError) throw groupError;
+
+  const people = await listPeople(groupId);
+
+  const { data: sessions, error: sessionsError } = await supabase
+    .from("sessions")
+    .select()
+    .eq("group_id", groupId)
+    .order("number");
+  if (sessionsError) throw sessionsError;
+
+  const sessionIds = sessions.map((session) => session.id);
+  const attendance = await rowsForSessions("attendance", sessionIds);
+  const answers = await rowsForSessions("answers", sessionIds);
+  const ticks = await rowsForSessions("ticks", sessionIds);
+
+  // The calculations use the names from "The group object" in the build
+  // steps, so they never need to know the database's column names.
+  return {
+    id: group.id,
+    name: group.name,
+    ageRange: group.age_range,
+    programType: group.program_type,
+    people: people.map((person) => ({ id: person.id, name: person.name })),
+    sessions: sessions.map((session) => ({
+      id: session.id,
+      number: session.number,
+      date: session.date,
+      activityType: session.activity_type,
+      activityNote: session.activity_note,
+      present: attendance
+        .filter((row) => row.session_id === session.id)
+        .map((row) => row.person_id),
+      answers: answers
+        .filter((row) => row.session_id === session.id)
+        .map((row) => ({
+          personId: row.person_id,
+          q4: row.q4,
+          q5: row.q5,
+          stayedWhole: row.stayed_whole,
+          firstTime: row.first_time,
+        })),
+      ticks: ticks
+        .filter((row) => row.session_id === session.id)
+        .map((row) => ({
+          from: row.from_person,
+          to: row.to_person,
+          workedWith: row.worked_with,
+          talkedTo: row.talked_to,
+          knewBefore: row.knew_before,
+        })),
+    })),
+  };
 }
