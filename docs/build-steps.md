@@ -40,7 +40,7 @@ This doc covers the backend. Once it's done, we'll plan the frontend together.
 ```
 connection-app/
   index.html        the app's main page
-  ui/               the screens (we'll plan these after the backend)
+  ui/               the screens (see docs/frontend-steps.md)
   core/             the backend (this doc)
     data.js         saving to and loading from the database (steps 1 to 4)
     network.js      who is linked to whom (step 5)
@@ -50,7 +50,7 @@ connection-app/
     positions.js    where each dot goes in the picture (step 10)
   lib/supabase.js   the database connection (already set up)
   tests/            automated tests, and test data in tests/fixtures/
-  docs/             the guides: onboarding, outline, and these build steps
+  docs/             the guides: onboarding, outline, these build steps, and the frontend steps
 ```
 
 The calculation files never talk to the database: that's everything in `core/` except `data.js`. They take data in and hand results back, which makes them easy to test.
@@ -597,4 +597,4 @@ tests/positions.test.js.
 
 ## What's next
 
-That's the whole backend. Once these steps are merged, we'll sit down together and plan the frontend: the screens that leaders and kids will actually use.
+That's the whole backend. The screens come next, in `docs/frontend-steps.md`.

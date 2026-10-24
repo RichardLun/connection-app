@@ -6,7 +6,8 @@ The guides are in `docs/`. Read them in this order:
 
 1. [docs/onboarding.md](docs/onboarding.md): getting set up
 2. [docs/outline.md](docs/outline.md): what we're building, and how we'll work
-3. [docs/build-steps.md](docs/build-steps.md): the step-by-step build
+3. [docs/build-steps.md](docs/build-steps.md): building the backend, step by step
+4. [docs/frontend-steps.md](docs/frontend-steps.md): building the screens, and testing the whole app
 
 ## Running it
 
