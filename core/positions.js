@@ -2,7 +2,7 @@
 // Step 10 of docs/build-steps.md.
 
 export function circlePositions(group) {
-  const people = [...group.people].sort((x, y) => x.name.localeCompare(y.name));
+  const people = [...group.people].sort((x, y) => x.name.localeCompare(y.name) || x.id.localeCompare(y.id));
   const n = people.length;
   const gap = 2 * Math.PI / n;
 
