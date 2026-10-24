@@ -1,0 +1,226 @@
+/* The shared look for every screen. Add styles for your own screens at the
+   bottom, under a comment with the screen's name. */
+
+:root {
+  --text: #1f2933;
+  --muted: #5f6b7a;
+  --line: #d9e2ec;
+  --background: #f5f7fa;
+  --card: #ffffff;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-soft: #dbeafe;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --warning: #92400e;
+  --warning-soft: #fef3c7;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--background);
+  line-height: 1.5;
+}
+
+header.top {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  padding: 0.75rem 1rem;
+}
+
+header.top a {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+main {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin: 2rem 0 0.75rem;
+}
+
+a {
+  color: var(--primary);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* A white box around one part of a screen. */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.error {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+}
+
+.warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+/* Forms */
+
+label {
+  display: block;
+  font-weight: 600;
+  margin: 0.75rem 0 0.25rem;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+/* A checkbox with its label on the same line, like in a "who's here" list. */
+label.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 400;
+  margin: 0;
+  padding: 0.4rem 0;
+}
+
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Buttons. A link with class="button" looks like a button too. */
+
+button,
+.button {
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border: 2px solid var(--primary);
+  border-radius: 999px;
+  background: var(--primary);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:hover,
+.button:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+button.secondary,
+.button.secondary {
+  background: white;
+  color: var(--primary);
+}
+
+button.secondary:hover,
+.button.secondary:hover {
+  background: var(--primary-soft);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* A row of buttons. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* A plain list with a line between items. */
+ul.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+ul.list li:last-child {
+  border-bottom: none;
+}
+
+/* Big numbers with a label under each, for the results screens. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+
+.stat {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+}
+
+.stat .value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.stat .label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--line);
+}

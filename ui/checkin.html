@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Check in · Connected</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Kids use this screen on a shared phone or tablet, so everything is big
+       and easy to tap. There's no header, so kids can't wander off into the
+       leader's screens. */
+    body {
+      background: white;
+    }
+
+    main {
+      max-width: 60rem;
+      padding-top: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .context {
+      color: var(--muted);
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-top: -0.5rem;
+    }
+
+    .big {
+      font-size: 1.3rem;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .options {
+      display: grid;
+      gap: 0.75rem;
+      max-width: 32rem;
+      margin: 1.5rem 0;
+    }
+
+    .circle-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    /* The hover rules are repeated so a tapped button on a tablet keeps
+       showing whether it's picked, instead of the shared hover color. */
+    button.choice,
+    button.choice:hover {
+      min-height: 4rem;
+      padding: 0.75rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      color: var(--text);
+    }
+
+    button.choice[aria-pressed="true"],
+    button.choice[aria-pressed="true"]:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    button.choice[aria-pressed="true"]::before {
+      content: "✓ ";
+    }
+
+    button.choice.done,
+    button.choice.done:hover {
+      background: var(--background);
+      color: var(--muted);
+    }
+
+    @media (hover: hover) {
+      button.choice:hover {
+        border-color: var(--primary);
+      }
+    }
+
+    button.choice svg {
+      display: block;
+      width: 100%;
+      max-width: 7rem;
+      margin: 0 auto 0.25rem;
+    }
+
+    .me {
+      fill: rgba(37, 99, 235, 0.5);
+      stroke: #1d4ed8;
+      stroke-width: 1.5;
+    }
+
+    .us {
+      fill: rgba(249, 115, 22, 0.45);
+      stroke: #c2410c;
+      stroke-width: 1.5;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .nav button {
+      min-height: 3.25rem;
+      padding: 0 2rem;
+      font-size: 1.15rem;
+    }
+
+    button.plain,
+    button.plain:hover {
+      background: none;
+      border: none;
+      color: var(--primary);
+      text-decoration: underline;
+      font-size: 1.05rem;
+      padding: 0.5rem 0;
+    }
+
+    .leader-link {
+      display: block;
+      width: fit-content;
+      margin-top: 3rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="muted">Loading...</p>
+  </main>
+  <script type="module" src="checkin.js"></script>
+</body>
+</html>
