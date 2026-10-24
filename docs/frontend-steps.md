@@ -60,8 +60,8 @@ Groups  →  Group  →  Session  →  Check-in (kids)
 
 The part of an address after the `?` tells the screen what to show. `group=ID` is the group's id, and `session=N` is the session's number (1, 2, 3 and so on), not its id. The app's home page sends you straight to the groups screen.
 
-Every screen works the same way:
-1. Read the group id, and the session number if it needs one, from the address with `getParam`.
+The screens for a group all work roughly the same way:
+1. Read the group id, and the session number if it needs one, from the address with `getParam`. Everything in an address is text, so turn the session number into a real number with `Number(getParam("session"))`. Otherwise session `"1"` won't match session `1`.
 2. Load the data with `loadGroup` from `core/data.js`.
 3. Get any numbers from the backend functions you wrote, like `sessionNumbers` and `peopleToCheckOn`. Screens never do the maths themselves.
 4. Build the page with `el`.
@@ -71,7 +71,7 @@ Every screen works the same way:
 
 | Helper | What it does | Example |
 |---|---|---|
-| `getParam(name)` | reads a value from the address | on `group.html?group=abc`, `getParam("group")` gives `"abc"` |
+| `getParam(name)` | reads a value from the address, always as text | on `group.html?group=abc`, `getParam("group")` gives `"abc"` |
 | `urlFor(page, params)` | builds the address of another screen | `urlFor("results.html", { group: group.id, session: 2 })` |
 | `el(tag, props, ...children)` | makes a page element | `el("button", { onclick: save }, "Save")` |
 | `svgEl(tag, attrs, ...children)` | the same, for the parts of a picture | `svgEl("circle", { cx: 50, cy: 50, r: 3 })` |
@@ -95,6 +95,7 @@ Every step ends with a "How to test it" checklist. These are the tools you'll us
 - **The Table Editor in Supabase:** shows the rows a screen saved.
 - **Phone size:** leaders will mostly use phones. In the Inspect panel, click the icon of a phone and tablet at the top left to see the page at phone size. You can also open your PR's Vercel preview link on your phone.
 - **The test groups:** "Fake site (test data)" and your "Tiny example" have a known right answer for every number.
+- **Moving between screens:** use the app's own links, not the browser's Back button. Back can show an old copy of a page from before you saved something.
 
 Once step 12 is done, you can open any group from the groups screen, and its id will be in the address bar. Before that, here are the test groups' ids:
 
@@ -140,10 +141,13 @@ Fill in ui/groups.js (and ui/groups.html if it needs anything) so the
 groups screen:
 - lists every group from listGroups(), newest first, showing each
   group's name, age range and program type (use labelFor with
-  PROGRAM_TYPES). Each name links to group.html?group=ID.
-- has a form to add a group: name (required), age range (like 11-13),
-  and program type (a dropdown made from PROGRAM_TYPES). Saving calls
-  createGroup, then opens the new group's screen.
+  PROGRAM_TYPES). listGroups() gives database rows, so those fields are
+  age_range and program_type, with underscores. Each name links to
+  group.html?group=ID.
+- has a form to add a group: name (required, with spaces trimmed from
+  the ends), age range (like 11-13), and program type (a dropdown made
+  from PROGRAM_TYPES). Saving calls createGroup, then opens the new
+  group's screen.
 - shows a short message if there are no groups yet.
 Build the page with el(), and call showError() if loading or saving
 fails. Explain your plan before writing any code.
@@ -153,7 +157,7 @@ fails. Explain your plan before writing any code.
 1. Run `npm run dev` and open the link. The home page should take you to the groups screen.
 2. You should see Practice group, Fake site (test data), Tiny example and Test club, newest first.
 3. Add a group called "My test group", ages 11-13, program type Sports. You should land on its group screen. It's still the starter page, but the address should end with `group.html?group=` and an id.
-4. Go back. "My test group" is at the top of the list, with "11-13" and "Sports".
+4. Click "Connected" at the top of the page to get back to the groups screen. "My test group" is at the top of the list, with "11-13" and "Sports".
 5. Try to add a group without a name. It shouldn't save.
 6. Find your new row in the `groups` table in Supabase.
 7. Look at the screen at phone size.
@@ -177,10 +181,12 @@ ui/group.html if needed). The group id comes from the address
 - the group's name, age range and program type, and a link back to the
   groups screen
 - Kids: everyone in the group, sorted by name, and a form to add a kid
-  with addPerson. After adding, clear the box and keep the cursor in it,
+  with addPerson. Trim spaces from the ends of the name, and don't add
+  an empty name. After adding, clear the box and keep the cursor in it,
   so the leader can type the next name straight away. If the group
-  already has a kid with that name (ignoring capital letters), don't add
-  it. Show a message asking for a last initial, like "Ana P.", instead.
+  already has a kid with that name (ignoring capital letters and spaces
+  at the ends), don't add it. Show a message asking for a last initial,
+  like "Ana P.", instead.
 - Sessions: newest first, each showing its number, date and activity
   (labelFor with ACTIVITY_TYPES), and linking to
   session.html?group=ID&session=NUMBER
@@ -197,9 +203,9 @@ Explain your plan before writing any code.
 **How to test it:**
 1. On the groups screen, click "My test group". Its id should be in the address.
 2. Add Ana, Ben, Cara, Dev, Eli and Fay, pressing Enter after each one. Each name should appear in alphabetical order, and the box should be empty and ready for the next name.
-3. Try adding "ana". It should ask for a last initial instead of adding her.
+3. Try adding "ana". It should ask for a last initial instead of adding her. Then try adding a name that's only spaces: nothing should be added.
 4. Start a session with activity "Pairs". You should land on the session screen (still a starter page) with `session=1` in the address.
-5. Go back to the group. Session 1 is listed with today's date and "Pairs".
+5. Get back to the group: click "Connected" at the top, then "My test group". Session 1 is listed with today's date and "Pairs".
 6. Start another session. It should be session 2, and the compare link should now show up.
 7. Open "Fake site (test data)". It has 20 kids, S01 to S20, and 2 sessions.
 8. Open `ui/group.html` with nothing after it. You should see a message, not a blank page.
@@ -220,8 +226,9 @@ Prompt:
 ```
 We're doing Step 13 of docs/frontend-steps.md. Fill in ui/session.js
 (and ui/session.html if needed). The address is
-session.html?group=ID&session=NUMBER. Load the group with loadGroup and
-find the session by its number. Show:
+session.html?group=ID&session=NUMBER. The session number in the address
+is text, so turn it into a number with Number(). Load the group with
+loadGroup and find the session by its number. Show:
 - the session's number, date, activity and note, and a link back to the
   group screen
 - Who's here: a checkbox for every kid in the group, ticked if they're
@@ -268,7 +275,9 @@ Prompt:
 ```
 We're doing Step 14 of docs/frontend-steps.md. Fill in ui/results.js
 (and ui/results.html if needed). The address is
-results.html?group=ID&session=NUMBER. Load the group and show:
+results.html?group=ID&session=NUMBER. The session number in the address
+is text, so turn it into a number with Number(). Load the group and
+show:
 - the group's name, the session's number, date and activity, and a link
   back to the session screen
 - the numbers from sessionNumbers(group, number), each in a box with
@@ -333,7 +342,8 @@ Prompt:
 
 ```
 We're doing Step 15 of docs/frontend-steps.md. Read the step first.
-In ui/picture.js, write drawPicture(group, sessionNumber, { highlight })
+In ui/picture.js, write
+drawPicture(group, sessionNumber, { highlight = [] } = {})
 that returns an <svg> element, following the step:
 - viewBox "0 0 100 100", with each kid's spot from circlePositions(group)
   times 100, but dots only for kids present at this session
@@ -372,7 +382,8 @@ We're doing Step 16 of docs/frontend-steps.md. Fill in ui/compare.js
 (and ui/compare.html if needed). The address is compare.html?group=ID.
 - Two dropdowns, Before and After, listing the group's sessions. They
   start on the first and last session, and can also be set from the
-  address (compare.html?group=ID&a=1&b=2).
+  address (compare.html?group=ID&a=1&b=2). Values from the address and
+  from the dropdowns are text, so turn them into numbers with Number().
 - Show compareSessions(group, a, b): kids at both sessions, new links,
   lost links, kids still isolated, and Q4 and Q5 for the kids who came
   both times: before, after, the change with a + or - sign, and how

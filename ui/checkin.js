@@ -112,16 +112,21 @@ function begin(person, finished) {
     return;
   }
 
-  // Kids are only asked who they knew before the first time they check in.
+  // Kids are only asked who they knew before at their very first check-in.
+  // Their earlier picks for this session are kept, so checking in again
+  // doesn't erase them.
   const checkedInBefore = group.sessions.some(
-    (s) => s.number !== session.number && s.answers.some((answer) => answer.personId === person.id),
+    (s) => s.answers.some((answer) => answer.personId === person.id),
   );
+  const knewBefore = session.ticks
+    .filter((tick) => tick.from === person.id && tick.knewBefore)
+    .map((tick) => tick.to);
 
   kid = {
     person,
     workedWith: new Set(),
     talkedTo: new Set(),
-    knewBefore: new Set(),
+    knewBefore: new Set(knewBefore),
     q4: null,
     q5: null,
     stayedWhole: "",
