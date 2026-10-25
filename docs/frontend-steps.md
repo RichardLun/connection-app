@@ -121,7 +121,7 @@ There's no PR for this part. It's a chance to see how the app feels for kids, an
 
 3. Check in as Ana. Say she worked with Ben and talked to Cara, and answer the rest however you like. Because it's her first check-in, she's also asked who she knew before joining the group. Kids only get that question once.
 4. Check in as Ben. Notice that Ana now has a ✓ next to her name, and the page counts how many kids have checked in.
-5. Open the `answers` and `ticks` tables in Supabase, and find the rows you just made.
+5. Open the `answers` and `ticks` tables in Supabase, and find the rows you just made. The tables also hold the test groups' rows, so sort by `created_at`, newest first, to put yours at the top.
 6. Tap Ana's name again. It asks before replacing her answers.
 7. Ask Claude Code: `Explain ui/checkin.js to me like I'm new to coding.` Your screens will follow the same pattern: load the group, build the page with `el`, and show it.
 
