@@ -23,12 +23,13 @@ export function qrCode(link) {
     }
   }
 
+  // No "crispEdges" here on purpose: it made Safari draw the squares unevenly
+  // on some screens, and then the code couldn't be read.
   return svgEl("svg", {
     class: "qr",
     viewBox: `0 0 ${size} ${size}`,
     role: "img",
     "aria-label": "QR code that opens the check-in",
-    "shape-rendering": "crispEdges",
   },
     svgEl("rect", { width: size, height: size, fill: "white" }),
     svgEl("path", { d: squares, fill: "black" }),
