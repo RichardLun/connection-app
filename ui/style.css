@@ -224,3 +224,12 @@ td {
   padding: 0.5rem;
   border-bottom: 1px solid var(--line);
 }
+
+/* The QR code kids scan to check in: big enough to scan from a few steps
+   away, but never wider than the screen. */
+.qr {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  height: auto;
+}

@@ -6,7 +6,7 @@ This is the big picture: what we're building, what it will do, and how we'll wor
 
 A web app that helps people who run youth groups see whether the kids in their group are actually connecting with each other.
 
-At the end of each session, each kid spends a couple of minutes on the leader's phone or laptop. They tap the names of the kids they worked with and the kids they talked to. Then they answer two questions:
+At the end of each session, each kid spends a couple of minutes checking in on their own phone, by scanning a QR code. Kids without a phone use the leader's phone instead. They tap the names of the kids they worked with and the kids they talked to. Then they answer two questions:
 - Q4: how close they feel to the group, on a scale of 1 to 7
 - Q5: how much they feel they belong, on a scale of 1 to 5
 

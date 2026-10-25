@@ -29,7 +29,8 @@ Progress (tick each one off in its PR):
 
 I've set up a few things so you can focus on the screens:
 
-- **The kid check-in screen** (`ui/checkin.html` and `ui/checkin.js`). It's finished and tested, so you won't need to change it. Your session screen links to it in step 13.
+- **The kid check-in screen** (`ui/checkin.html` and `ui/checkin.js`). It's finished and tested, so you won't need to change it. Kids open it on their own phones by scanning a QR code, which your session screen shows in step 13. Kids without a phone can use the leader's phone instead.
+- **The QR code** (`ui/qr.js`): draws the QR code that kids scan. Your session screen uses it in step 13.
 - **The shared look** (`ui/style.css`): colors, buttons, forms, and boxes for numbers. Every screen uses it.
 - **Helpers** (`ui/app.js`): small functions that every screen needs. They're described below.
 - **A starter file for each screen** in `ui/`. Each one has the page layout and a note saying which step fills it in.
@@ -54,9 +55,11 @@ Groups  →  Group  →  Session  →  Check-in (kids)
 | Groups | every group, and adding a new one | `ui/groups.html` | 11 |
 | Group | a group's kids and sessions, and starting a session | `ui/group.html?group=ID` | 12 |
 | Session | who's here, and how check-ins are going | `ui/session.html?group=ID&session=N` | 13 |
-| Check-in | kids answer the questions | `ui/checkin.html?group=ID&session=N` | already built |
+| Check-in | kids answer the questions, on their own phones | `ui/checkin.html?group=ID&session=N` | already built |
 | Results | one session's numbers, who to check on, and the picture | `ui/results.html?group=ID&session=N` | 14 and 15 |
 | Compare | what changed between two sessions | `ui/compare.html?group=ID` | 16 |
+
+Kids get to the check-in by scanning the QR code on the session screen with their phone's camera. Kids without a phone use the leader's phone instead: the session screen's "Check in on this device" button opens the check-in with `&shared=1` at the end of the address. That version gets ready for the next kid after each one, and has a link back to the session screen.
 
 The part of an address after the `?` tells the screen what to show. `group=ID` is the group's id, and `session=N` is the session's number (1, 2, 3 and so on), not its id. The app's home page sends you straight to the groups screen.
 
@@ -73,6 +76,8 @@ The screens for a group all work roughly the same way:
 |---|---|---|
 | `getParam(name)` | reads a value from the address, always as text | on `group.html?group=abc`, `getParam("group")` gives `"abc"` |
 | `urlFor(page, params)` | builds the address of another screen | `urlFor("results.html", { group: group.id, session: 2 })` |
+| `fullUrl(page, params)` | the same, but the full address starting with https://, for links that leave the app | `fullUrl("checkin.html", { group: group.id, session: 2 })` |
+| `qrCode(link)`, in `ui/qr.js` | draws a QR code that opens a link | `qrCode(fullUrl("checkin.html", { group: group.id, session: 2 }))` |
 | `el(tag, props, ...children)` | makes a page element | `el("button", { onclick: save }, "Save")` |
 | `svgEl(tag, attrs, ...children)` | the same, for the parts of a picture | `svgEl("circle", { cx: 50, cy: 50, r: 3 })` |
 | `showError(error)` | shows a red message at the top of the page | `showError(error)` inside a `catch` |
@@ -94,6 +99,7 @@ Every step ends with a "How to test it" checklist. These are the tools you'll us
 - **The console:** right-click the page, choose Inspect, then the Console tab. Errors show up there in red. If something doesn't work, look there first, and paste the error into Claude Code.
 - **The Table Editor in Supabase:** shows the rows a screen saved.
 - **Phone size:** leaders will mostly use phones. In the Inspect panel, click the icon of a phone and tablet at the top left to see the page at phone size. You can also open your PR's Vercel preview link on your phone.
+- **Trying things on your phone:** a link or QR code made while you run `npm run dev` points to `localhost`, which only exists on your computer, so your phone can't open it. Use your PR's Vercel preview link instead.
 - **The test groups:** "Fake site (test data)" and your "Tiny example" have a known right answer for every number.
 - **Moving between screens:** use the app's own links, not the browser's Back button. Back can show an old copy of a page from before you saved something.
 
@@ -115,15 +121,19 @@ There's no PR for this part. It's a chance to see how the app feels for kids, an
    git pull
    ```
 
-2. Open the Practice group's check-in on the live site, on your phone if you can:
+2. Open the Practice group's check-in on the live site, on your phone if you can. Kids will get here by scanning a QR code, which you'll add in step 13.
 
    https://connection-app-alpha.vercel.app/ui/checkin.html?group=68708fce-4f5a-4d74-9f57-a6322b3a51e9&session=1
 
-3. Check in as Ana. Say she worked with Ben and talked to Cara, and answer the rest however you like. Because it's her first check-in, she's also asked who she knew before joining the group. Kids only get that question once.
-4. Check in as Ben. Notice that Ana now has a ✓ next to her name, and the page counts how many kids have checked in.
+3. Check in as Ana. Say she worked with Ben and talked to Cara, and answer the rest however you like. Because it's her first check-in, she's also asked who she knew before joining the group. Kids only get that question once. At the end, it tells her she's all done.
+4. Tap "Check in someone else", and check in as Ben. Notice that Ana now has a ✓ next to her name, and the page counts how many kids have checked in.
 5. Open the `answers` and `ticks` tables in Supabase, and find the rows you just made. The tables also hold the test groups' rows, so sort by `created_at`, newest first, to put yours at the top.
 6. Tap Ana's name again. It asks before replacing her answers.
-7. Ask Claude Code: `Explain ui/checkin.js to me like I'm new to coding.` Your screens will follow the same pattern: load the group, build the page with `el`, and show it.
+7. Now try the version for kids without a phone, who use the leader's phone instead. Open this link and check in as Cara. At the end, it asks her to pass the phone to the next person, and goes back to the names by itself.
+
+   https://connection-app-alpha.vercel.app/ui/checkin.html?group=68708fce-4f5a-4d74-9f57-a6322b3a51e9&session=1&shared=1
+
+8. Ask Claude Code: `Explain ui/checkin.js to me like I'm new to coding.` Your screens will follow the same pattern: load the group, build the page with `el`, and show it.
 
 # The frontend steps
 
@@ -217,7 +227,7 @@ Explain your plan before writing any code.
 
 ## Step 13: The session screen
 
-The leader uses this screen during a session: to mark who's here, to hand their phone to the kids for check-in, and to see how check-ins are going.
+The leader uses this screen during a session: to mark who's here, to show the QR code that kids scan to check in, and to see how check-ins are going.
 
 Remember the backend rule: answers only count from kids who are marked as here. So this screen also warns the leader when a kid has checked in but isn't marked as here.
 
@@ -239,9 +249,15 @@ loadGroup and find the session by its number. Show:
   checked in yet
 - a warning naming any kid who has an answer but isn't marked as here,
   saying their answers won't count unless they're ticked
-- a "Start check-ins" button linking to
-  checkin.html?group=ID&session=NUMBER, and a "See results" link to
-  results.html?group=ID&session=NUMBER
+- Check in: a QR code for kids to scan with their own phones, made with
+  qrCode(fullUrl("checkin.html", { group: ID, session: NUMBER })) from
+  ui/qr.js and ui/app.js. Under it, show the same address with a "Copy
+  link" button, so the leader can also send it in a group chat.
+- a "Check in on this device" button linking to
+  checkin.html?group=ID&session=NUMBER&shared=1, for kids without a phone
+- a Refresh button that loads the group again, so the leader can watch
+  check-ins come in from kids' phones
+- a "See results" link to results.html?group=ID&session=NUMBER
 After saving, load the group again so the check-ins and the warning are
 up to date. If the address is wrong or the session doesn't exist, show
 a clear message. Use el() and showError(). Explain your plan before
@@ -251,15 +267,19 @@ writing any code.
 **How to test it:**
 1. Open session 1 of "My test group". Nobody is ticked yet.
 2. Tick all six kids and save. Reload the page: they should still be ticked. The `attendance` table should have 6 rows for this session.
-3. Click "Start check-ins". You should see the check-in screen with all six names. Check in as Ana, then tap "Leader: back to the session screen" under the names.
+3. Click "Check in on this device". You should see the check-in screen with all six names. Check in as Ana. At the end, it asks her to pass the phone on. Then tap "Leader: back to the session screen" under the names.
 4. The session screen should say "1 of 6 checked in", and list Ben, Cara, Dev, Eli and Fay as not checked in yet.
 5. Untick Ana and save. A warning about Ana should appear. Tick her again and save, and the warning should go away.
 6. Open session 2 of "Fake site (test data)". 16 kids are ticked, and it says "16 of 16 checked in".
-7. Look at the screen at phone size. Leaders will tick the boxes with their thumbs, so make sure they're easy to tap.
+7. Now try the QR code. Your phone can't open links from `npm run dev`, so push your branch and open your PR first. Once Vercel adds the preview link, open session 1 of "My test group" on the preview, on your laptop.
+   - Scan the QR code with your phone's camera, and check in as Ben on your phone. At the end, it should say he's all done, with no link to the leader's screens.
+   - Click Refresh on your laptop. It should say "2 of 6 checked in".
+   - Click "Copy link", and paste it into a new tab. It should open the check-in.
+8. Look at the screen at phone size. Leaders will tick the boxes with their thumbs, so make sure they're easy to tap, and that the QR code fits on the screen.
 
-**Your call:** a "Tick everyone" button would save leaders of big groups a lot of taps. Add one if you like.
+**Your call:** a "Tick everyone" button would save leaders of big groups a lot of taps. Add one if you like. Also think about where the QR code goes: the whole group scans it from the leader's screen, so it should be easy to find.
 
-**In your PR:** Why does a kid have to be marked as here for their answers to count?
+**In your PR:** Why does a kid have to be marked as here for their answers to count? Why does the QR code need `fullUrl()` instead of `urlFor()`?
 
 ## Step 14: The results screen
 
@@ -423,7 +443,7 @@ writing any code.
 
 This is the final test, like the end of a class project. You'll use the app the way a leader and their kids will: set up a group, run two sessions, and check that every screen shows the right thing. The answers below are chosen so we know exactly what each screen should show.
 
-Do it on the live site once everything is merged: https://connection-app-alpha.vercel.app. Do the check-ins on your phone if you can, like a real group would.
+Do it on the live site once everything is merged: https://connection-app-alpha.vercel.app. Do the check-ins on your phone by scanning the QR code, like a real group would.
 
 Keep a test log as you go. Make a new issue on GitHub called "Final test", copy this whole section into it, and tick each box as it passes. If something doesn't match, write down what you expected and what you saw. Then fix it on a branch, merge the fix, and test that part again.
 
@@ -436,7 +456,7 @@ Keep a test log as you go. Make a new issue on GitHub called "Final test", copy 
 
 - [ ] Start a session with the activity "Pairs".
 - [ ] Mark all six kids as here, and save.
-- [ ] Start check-ins, and check in these five kids. Fay doesn't check in. Each kid is also asked who they knew before joining: tap anyone you like, since it doesn't change the numbers.
+- [ ] Check in these five kids. Do most of them on your phone by scanning the QR code, tapping "Check in someone else" between kids. Do at least one with "Check in on this device", the way a kid without a phone would. Fay doesn't check in. Each kid is also asked who they knew before joining: tap anyone you like, since it doesn't change the numbers.
 
 | Kid | Worked with | Talked to | Q4 | Q5 | Stayed whole | First time |
 |---|---|---|---|---|---|---|
@@ -446,13 +466,13 @@ Keep a test log as you go. Make a new issue on GitHub called "Final test", copy 
 | Dev | nobody | nobody | Skip | Skip | Yes | Yes |
 | Eli | nobody | nobody | 3 | 2 | Yes | Yes |
 
-- [ ] The session screen says "5 of 6 checked in", with Fay not checked in yet.
+- [ ] After you click Refresh, the session screen says "5 of 6 checked in", with Fay not checked in yet.
 
 ### Part 3: Session 2
 
 - [ ] Start a second session, with the activity "Small groups (kids chose)".
 - [ ] Mark Ana, Ben, Cara, Dev and Eli as here, but not Fay.
-- [ ] On the check-in screen, Fay isn't on the list.
+- [ ] Scan session 2's QR code. On the check-in screen, Fay isn't on the list.
 - [ ] Check in these five kids. Nobody is asked who they knew before, because they all answered that in session 1. Each kid gets 6 questions instead of 7.
 
 | Kid | Worked with | Talked to | Q4 | Q5 | Stayed whole | First time |
@@ -504,11 +524,12 @@ Q4 and Q5 count 4 kids, not 5, because Dev skipped them in session 1.
 - [ ] Session 2's results still say 5 checked in, and the Q4 average is now 5.40.
 - [ ] On the compare screen, Q4 is now 4.50 before and 5.75 after, a change of +1.25, and the warning says "rose by 1.25".
 - [ ] On session 2's session screen, untick Eli and save. The warning about Eli appears. Tick him again and save.
-- [ ] A check-in with no internet: open session 2's check-in on your phone and tap Dev (say yes to starting again). Then turn on airplane mode, and answer exactly as in Part 3. At the end it should say "That didn't save". Turn airplane mode off and tap "Try again". It should save, and since Dev gave the same answers, session 2's numbers shouldn't change.
+- [ ] A check-in with no internet: scan session 2's QR code with your phone and tap Dev (say yes to starting again). Then turn on airplane mode, and answer exactly as in Part 3. At the end it should say "That didn't save". Turn airplane mode off and tap "Try again". It should save, and since Dev gave the same answers, session 2's numbers shouldn't change.
 
 ### Part 7: Every screen
 
 - [ ] You can get from the home page to every screen by tapping links, without typing any addresses.
+- [ ] On your phone, a check-in ends with "You're all done", and there's no link to the leader's screens. With "Check in on this device", it asks kids to pass the phone on, and goes back to the names by itself.
 - [ ] Every screen looks right at phone size.
 - [ ] Each screen shows a clear message, not a blank page, when its address is missing the group: try `ui/group.html`, `ui/session.html`, `ui/results.html` and `ui/compare.html` with nothing after them.
 - [ ] "Fake site (test data)" still matches the tables in steps 14 and 16.

@@ -1,6 +1,8 @@
-// The kid check-in screen. Each kid taps their name, answers one question at
-// a time, then hands the device to the next kid.
-// Open it as checkin.html?group=GROUP_ID&session=SESSION_NUMBER.
+// The kid check-in screen. Kids open it on their own phones by scanning the
+// QR code on the session screen, tap their name, and answer one question at
+// a time. Kids without a phone use the leader's device instead.
+// Open it as checkin.html?group=GROUP_ID&session=SESSION_NUMBER, and add
+// &shared=1 for a device that kids pass around.
 import { loadGroup, saveCheckIn } from "../core/data.js";
 import { getParam, urlFor, el, svgEl } from "./app.js";
 
@@ -26,6 +28,9 @@ const YES_NO = [
 
 const groupId = getParam("group");
 const sessionNumber = Number(getParam("session"));
+// A shared device gets ready for the next kid after each one, and has a link
+// back to the leader's screens. On a kid's own phone, neither makes sense.
+const shared = getParam("shared") === "1";
 const main = document.querySelector("main");
 
 let group; // everything about the group, from loadGroup
@@ -78,7 +83,7 @@ function showNames() {
       el("h1", {}, "Nobody is marked as here yet"),
       el("p", { className: "big" }, "Ask your leader to mark who's here."),
       el("div", { className: "nav" }, el("button", { className: "secondary", onclick: start }, "Check again")),
-      leaderLink(),
+      shared ? leaderLink() : null,
     );
     return;
   }
@@ -103,7 +108,7 @@ function showNames() {
     el("p", { className: "muted" }, `${here.filter((p) => done.has(p.id)).length} of ${here.length} checked in`),
     el("button", { className: "plain", onclick: () => { notListed.hidden = false; } }, "My name isn't here"),
     notListed,
-    leaderLink(),
+    shared ? leaderLink() : null,
   );
 }
 
@@ -275,6 +280,16 @@ async function save() {
 function thanks() {
   const name = kid.person.name;
   kid = null;
+  if (!shared) {
+    // A friend without a phone might borrow this one, so they can still
+    // check in from here.
+    show(
+      el("h1", {}, `Thanks, ${name}!`),
+      el("p", { className: "big" }, "You're all done. You can put your phone away."),
+      el("div", { className: "nav" }, el("button", { className: "plain", onclick: start }, "Check in someone else")),
+    );
+    return;
+  }
   // Goes back to the name list by itself, in case a kid walks off without
   // tapping the button.
   const timer = setTimeout(start, 8000);

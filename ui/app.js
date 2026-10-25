@@ -13,6 +13,12 @@ export function urlFor(page, params = {}) {
   return `${page}?${new URLSearchParams(params)}`;
 }
 
+// The full address of another screen, starting with https://. Use it for
+// links that leave the app, like a QR code or a link sent in a group chat.
+export function fullUrl(page, params = {}) {
+  return new URL(urlFor(page, params), location.href).href;
+}
+
 // Makes a page element, like el("button", { onclick: save }, "Save").
 // Text goes in as plain text, so a name like "Ana <3" shows up exactly as
 // typed instead of being read as HTML.
