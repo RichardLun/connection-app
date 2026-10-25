@@ -37,7 +37,7 @@ async function start() {
   // Left out when empty, so a group without them has no stray "·".
   const details = [group.ageRange, labelFor(PROGRAM_TYPES, group.programType)].filter(Boolean).join(" · ");
 
-  main.replaceChildren(
+  fill(main,
     backLink(),
     el("h1", {}, group.name),
     details ? el("p", { className: "muted" }, details) : null,
@@ -173,6 +173,12 @@ function kidsSection() {
       el("div", { className: "actions" }, button),
     ),
   );
+}
+
+// Like replaceChildren, but skips null. The browser's own replaceChildren
+// would show a null as the word "null".
+function fill(box, ...parts) {
+  box.replaceChildren(...parts.filter(Boolean));
 }
 
 // Sorted by name, then id, the same as the check-in screen, so kids are in
