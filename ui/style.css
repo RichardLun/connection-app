@@ -98,6 +98,12 @@ label {
   margin: 0.75rem 0 0.25rem;
 }
 
+/* A short note between a label and its box. */
+.field-hint {
+  font-size: 0.9rem;
+  margin: 0 0 0.35rem;
+}
+
 input[type="text"],
 input[type="date"],
 select,
