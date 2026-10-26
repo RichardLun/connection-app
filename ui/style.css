@@ -14,6 +14,10 @@
   --danger-soft: #fee2e2;
   --warning: #92400e;
   --warning-soft: #fef3c7;
+  --isolate: #ea580c;
+  --unknown: #8896a6;
+  --link: #b6c2cf;
+  --highlight: #059669;
   --radius: 12px;
 }
 
@@ -243,4 +247,99 @@ td {
   width: 100%;
   max-width: 16rem;
   height: auto;
+}
+
+/* The network picture, on the results and compare screens. */
+.picture {
+  display: block;
+  width: 100%;
+  max-width: 32rem;
+  margin: 0 auto;
+  /* Lets a long name at the edge show instead of being cut off. The
+     padding leaves it room. */
+  overflow: visible;
+  padding: 0 1.5rem;
+}
+
+.picture .link {
+  stroke: var(--link);
+  stroke-width: 0.5;
+}
+
+.picture .link.highlight {
+  stroke: var(--highlight);
+  stroke-width: 1.2;
+}
+
+.picture .dot {
+  stroke: var(--card);
+  stroke-width: 0.6;
+}
+
+.picture .dot.connected {
+  fill: var(--primary);
+}
+
+.picture .dot.isolate {
+  fill: var(--isolate);
+}
+
+/* Hollow, so it looks different by shape as well as color. */
+.picture .dot.unknown {
+  fill: var(--card);
+  stroke: var(--unknown);
+  stroke-width: 0.8;
+}
+
+/* The white outline keeps a name readable where it crosses a line. */
+.picture .name {
+  font-size: 3px;
+  fill: var(--text);
+  stroke: var(--card);
+  stroke-width: 0.8;
+  paint-order: stroke;
+}
+
+.picture-key {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.picture-key li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+}
+
+.swatch.connected {
+  background: var(--primary);
+}
+
+.swatch.isolate {
+  background: var(--isolate);
+}
+
+.swatch.unknown {
+  border: 2px solid var(--unknown);
+}
+
+.swatch.highlight {
+  width: 1.2rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--highlight);
 }

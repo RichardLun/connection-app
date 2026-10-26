@@ -4,6 +4,7 @@ import { loadGroup } from "../core/data.js";
 import { sessionNumbers } from "../core/numbers.js";
 import { peopleToCheckOn, REASON_TEXT } from "../core/insights.js";
 import { el, getParam, urlFor, showError, formatNumber, labelFor, ACTIVITY_TYPES } from "./app.js";
+import { drawPicture, pictureKey } from "./picture.js";
 
 const groupId = getParam("group");
 const sessionNumber = Number(getParam("session"));
@@ -62,8 +63,11 @@ function draw(group, session) {
         el("a", { href: sessionLink }, "Tick who's here on the session screen."))
       : [
         stats(sessionNumbers(group, session.number)),
-        // Step 15 draws the picture in here.
-        el("div", { id: "picture" }),
+        el("section", { className: "card" },
+          el("h2", {}, "Who connected"),
+          drawPicture(group, session.number),
+          pictureKey(),
+        ),
         checkOn(group, session.number),
       ],
     otherLinks(group, session.number),
