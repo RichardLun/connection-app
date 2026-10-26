@@ -75,6 +75,11 @@ a {
   margin: 1rem 0;
 }
 
+/* The card's padding is enough space above its first heading. */
+.card > :first-child {
+  margin-top: 0;
+}
+
 .error {
   background: var(--danger-soft);
   color: var(--danger);
