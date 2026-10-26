@@ -17,7 +17,7 @@
   --isolate: #ea580c;
   --unknown: #8896a6;
   --link: #b6c2cf;
-  --highlight: #059669;
+  --highlight: #4ade80;
   --radius: 12px;
 }
 
@@ -291,6 +291,13 @@ td {
   stroke-width: 0.8;
 }
 
+/* Kids in a new connection, on the compare screen. A bit thicker than the
+   white border, so it shows on small dots. */
+.picture .dot.new {
+  stroke: var(--highlight);
+  stroke-width: 0.8;
+}
+
 /* The white outline keeps a name readable where it crosses a line. */
 .picture .name {
   font-size: 3px;
@@ -342,4 +349,30 @@ td {
   height: 3px;
   border-radius: 2px;
   background: var(--highlight);
+}
+
+/* Compare screen */
+.pickers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.picture-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.picture-pair h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+/* On a phone the pictures would be too small side by side. */
+@media (max-width: 40rem) {
+  .picture-pair {
+    grid-template-columns: 1fr;
+  }
 }

@@ -27,9 +27,12 @@ export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
     const b = spot(link.b);
     return svgEl("line", { class: isHighlighted(link) ? "link highlight" : "link", x1: a.x, y1: a.y, x2: b.x, y2: b.y });
   });
+  // A green border makes the kids in a new link easy to find, not just the line.
+  const inNewLink = new Set(highlight.flat());
   const dots = network.people.map((id) => {
     const { x, y } = spot(id);
-    return svgEl("circle", { class: `dot ${network.status[id]}`, cx: x, cy: y, r: dotSize(network.degree[id]) });
+    const kind = inNewLink.has(id) ? `${network.status[id]} new` : network.status[id];
+    return svgEl("circle", { class: `dot ${kind}`, cx: x, cy: y, r: dotSize(network.degree[id]) });
   });
   const names = network.people.map((id) => nameLabel(spot(id), dotSize(network.degree[id]), nameOf(id)));
 
@@ -46,16 +49,16 @@ export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
 export function pictureKey({ showNew = false } = {}) {
   return el("ul", { className: "picture-key" },
     Object.entries(STATUS_TEXT).map(([status, text]) => el("li", {}, el("span", { className: `swatch ${status}` }), text)),
-    showNew ? el("li", {}, el("span", { className: "swatch highlight" }), "New connection") : null,
+    showNew ? el("li", {}, el("span", { className: "swatch highlight" }), "New connection (green line and border)") : null,
     el("li", {}, "Bigger dots: more connections"),
   );
 }
 
-// Kids with no links keep a normal size, because they're the ones a leader
-// most needs to see. The cap stops neighbouring dots overlapping in groups of
-// up to about 25 kids.
+// Kids with no links still get a clear dot, because they're the ones a leader
+// most needs to see. Small enough, and capped, so that in a group of 20 the
+// lines between neighbouring dots stay visible.
 function dotSize(links) {
-  return 2.5 + 0.5 * Math.min(links, 5);
+  return 1.75 + 0.35 * Math.min(links, 5);
 }
 
 // Pushes the name out from the middle of the circle, so it sits outside the
