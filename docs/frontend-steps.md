@@ -431,7 +431,7 @@ writing any code.
    - the warning "Average Q4 rose by 1.00 and average Q5 rose by 1.00, but 2 people were isolated in both sessions."
 2. In the After picture, 5 lines are highlighted: S02-S04, S03-S06, S05-S07, S08-S10 and S09-S11.
 3. Set Before and After to the same session. You should see the message instead.
-4. Open the compare screen for "Practice group", which has one session. You should see the message.
+4. "Practice group" has only one session, so its group screen has no compare link, which is right. The message is for anyone who opens the compare address directly, like from an old link. To test it, add `ui/compare.html?group=68708fce-4f5a-4d74-9f57-a6322b3a51e9` to the end of the app's link. You should see the message.
 5. Open the compare screen for "Test club". Nobody came to both sessions, so the counts are 0, the averages say "n/a", and there's no warning.
 6. Look at it at phone size.
 
