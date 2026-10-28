@@ -8,7 +8,7 @@ import { buildNetwork } from "./network.js";
 export const REASON_TEXT = {
   "no-links-twice": "No connections this session and last session",
   "no-links": "No connections this session",
-  "no-answer": "Didn't fill in the check-in",
+  "no-answer": "Didn't fill in the check-in, and nobody said they connected with them",
 };
 
 // Most worrying first, so it's the first thing a leader sees.

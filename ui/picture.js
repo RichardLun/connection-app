@@ -15,6 +15,12 @@ export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
   const positions = circlePositions(group);
   const spot = (id) => ({ x: positions[id].x * 100, y: positions[id].y * 100 });
   const nameOf = (id) => group.people.find((person) => person.id === id).name;
+  // How much of the circle each kid gets. In a big group there's less, so the
+  // dots shrink and the names turn into spokes to keep clear of each other.
+  const room = 2 * Math.PI * 40 / group.people.length;
+  const spokes = room < 11;
+  // Capped at a third of the room, so neighbouring dots never touch.
+  const radius = (id) => Math.min(dotSize(network.degree[id]), room / 3);
 
   // Sorted the same way buildNetwork sorts a link's ids, so a pair matches
   // whichever order it's given in.
@@ -32,13 +38,14 @@ export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
   const dots = network.people.map((id) => {
     const { x, y } = spot(id);
     const kind = inNewLink.has(id) ? `${network.status[id]} new` : network.status[id];
-    return svgEl("circle", { class: `dot ${kind}`, cx: x, cy: y, r: dotSize(network.degree[id]) });
+    return svgEl("circle", { class: `dot ${kind}`, cx: x, cy: y, r: radius(id) });
   });
-  const names = network.people.map((id) => nameLabel(spot(id), dotSize(network.degree[id]), nameOf(id)));
+  const names = network.people.map((id) => nameLabel(spot(id), radius(id), nameOf(id), spokes));
 
   return svgEl("svg", {
     class: "picture",
-    viewBox: "0 0 100 100",
+    // Spoke names stick out further than level ones, so they need a wider edge.
+    viewBox: spokes ? "-15 -15 130 130" : "0 0 100 100",
     role: "img",
     "aria-label": `${network.people.length} kids, ${network.links.length} connections`,
   }, lines, dots, names);
@@ -62,15 +69,32 @@ function dotSize(links) {
 }
 
 // Pushes the name out from the middle of the circle, so it sits outside the
-// ring of dots and off the lines. Bigger dots push it further.
-function nameLabel({ x, y }, radius, name) {
+// ring of dots and off the lines. Bigger dots push it further. As a spoke, the
+// name points straight out, so long names in a crowded ring don't overlap.
+function nameLabel({ x, y }, radius, name, spoke) {
   const dx = (x - 50) / 40;
   const dy = (y - 50) / 40;
+  const nameX = x + dx * (radius + 2);
+  const nameY = y + dy * (radius + 2);
+  if (spoke) {
+    // Names on the left are turned the other way round and end at the dot,
+    // so they still point outward without being upside down.
+    const left = dx < 0;
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI + (left ? 180 : 0);
+    return svgEl("text", {
+      class: "name",
+      x: nameX,
+      y: nameY,
+      "text-anchor": left ? "end" : "start",
+      "dominant-baseline": "middle",
+      transform: `rotate(${angle} ${nameX} ${nameY})`,
+    }, name);
+  }
   const anchor = dx > 0.3 ? "start" : dx < -0.3 ? "end" : "middle";
   return svgEl("text", {
     class: "name",
-    x: x + dx * (radius + 2),
-    y: y + dy * (radius + 2),
+    x: nameX,
+    y: nameY,
     "text-anchor": anchor,
     "dominant-baseline": "middle",
   }, name);

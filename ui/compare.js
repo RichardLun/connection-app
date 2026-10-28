@@ -113,8 +113,8 @@ function showComparison(group, a, b) {
 function pictures(group, a, b) {
   return el("section", { className: "card" },
     el("div", { className: "picture-pair" },
-      el("div", {}, el("h2", {}, `Before: session ${a}`), drawPicture(group, a)),
-      el("div", {}, el("h2", {}, `After: session ${b}`), drawPicture(group, b, { highlight: newLinkPairs(group, a, b) })),
+      el("div", {}, el("h2", {}, `Before: Session ${a}`), drawPicture(group, a)),
+      el("div", {}, el("h2", {}, `After: Session ${b}`), drawPicture(group, b, { highlight: newLinkPairs(group, a, b) })),
     ),
     pictureKey({ showNew: true }),
   );
