@@ -75,7 +75,6 @@ function draw(group, session) {
 }
 
 function stats(numbers) {
-  const answered = (average, count) => `${formatNumber(average, 2)} (${count} answered)`;
   return el("section", { className: "stats" },
     stat(numbers.present, "Kids here"),
     stat(numbers.answered, "Checked in"),
@@ -85,14 +84,17 @@ function stats(numbers) {
     stat(numbers.unknown, "Didn't check in"),
     stat(formatNumber(numbers.centralization, 2), "How much the connections center on one kid (0 to 1)"),
     stat(formatNumber(numbers.averageLinks, 1), "Connections per kid, on average"),
-    stat(answered(numbers.q4Average, numbers.q4Count), "How close kids feel to the group (Q4, 1 to 7)"),
-    stat(answered(numbers.q5Average, numbers.q5Count), "How much kids feel they belong (Q5, 1 to 5)"),
+    // The count goes on its own line under the number, because next to it the
+    // number wraps onto two lines on a phone.
+    stat(formatNumber(numbers.q4Average, 2), "How close kids feel to the group (Q4, 1 to 7)", `${numbers.q4Count} answered`),
+    stat(formatNumber(numbers.q5Average, 2), "How much kids feel they belong (Q5, 1 to 5)", `${numbers.q5Count} answered`),
   );
 }
 
-function stat(value, label) {
+function stat(value, label, note) {
   return el("div", { className: "stat" },
     el("div", { className: "value" }, String(value)),
+    note ? el("div", { className: "label" }, note) : null,
     el("div", { className: "label" }, label),
   );
 }

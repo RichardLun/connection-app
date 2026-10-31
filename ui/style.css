@@ -370,9 +370,11 @@ td {
   text-align: center;
 }
 
-/* On a phone the pictures would be too small side by side. */
+/* On a phone the pictures would be too small side by side, and the
+   dropdowns would cut off the dates. */
 @media (max-width: 40rem) {
-  .picture-pair {
+  .picture-pair,
+  .pickers {
     grid-template-columns: 1fr;
   }
 }
