@@ -334,8 +334,8 @@ writing any code.
    | Q5 average | 3.00 (18 answered) | 4.00 (15 answered) |
 
 2. Check "Who to check on":
-   - Session 1: S15 and S16 ("No connections this session"), then S14 ("Didn't fill in the check-in")
-   - Session 2: S15 and S16 ("No connections this session and last session"), then S14 ("Didn't fill in the check-in")
+   - Session 1: S15 and S16 ("No connections this session"), then S14 ("Didn't fill in the check-in, and nobody said they connected with them")
+   - Session 2: S15 and S16 ("No connections this session and last session"), then S14 ("Didn't fill in the check-in, and nobody said they connected with them")
 3. The previous and next links move between sessions 1 and 2.
 4. Open your "Tiny example" group's session 1. It should match the numbers from backend step 6: density 0.20, centralization 0.30, Q4 4.50 (4 answered), and so on, with Eli and Fay to check on.
 5. Open "Test club" session 1, where only Ana is marked as here. Density and centralization should say "n/a", because they need at least 2 and 3 kids. Then open session 2, where nobody is marked as here. You should see a message instead of the numbers.
@@ -500,7 +500,7 @@ Keep a test log as you go. Make a new issue on GitHub called "Final test", copy 
 | Q4 average | 4.50 (4 answered) | 5.00 (5 answered) |
 | Q5 average | 3.50 (4 answered) | 3.80 (5 answered) |
 
-- [ ] Who to check on, session 1: Eli ("No connections this session"), then Fay ("Didn't fill in the check-in").
+- [ ] Who to check on, session 1: Eli ("No connections this session"), then Fay ("Didn't fill in the check-in, and nobody said they connected with them").
 - [ ] Who to check on, session 2: Eli ("No connections this session and last session").
 - [ ] Session 1's picture has 3 lines: Ana-Ben, Ana-Cara and Cara-Dev. Eli and Fay have no lines, and their dots are different colors.
 - [ ] Session 2's picture has 4 lines: Ana-Ben, Ana-Dev, Ben-Cara and Cara-Dev. Fay has no dot, and nobody else has moved.
