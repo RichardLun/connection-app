@@ -4,6 +4,8 @@ import { loadGroup } from "../core/data.js";
 import { compareSessions, newLinkPairs } from "../core/compare.js";
 import { el, getParam, urlFor, showError, formatNumber } from "./app.js";
 import { drawPicture, pictureKey } from "./picture.js";
+import { comparisonOverviewData } from "../core/overview.js";
+import { overviewCard } from "./overview.js";
 
 const groupId = getParam("group");
 const main = document.querySelector("main");
@@ -98,6 +100,7 @@ function showComparison(group, a, b) {
   const result = compareSessions(group, a, b);
   comparison.replaceChildren(...[
     result.warning ? el("p", { className: "warning" }, result.warning) : null,
+    overviewCard(comparisonOverviewData(group, a, b)),
     pictures(group, a, b),
     el("p", { className: "muted" }, "Only kids who came to both sessions are compared."),
     el("section", { className: "stats" },

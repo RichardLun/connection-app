@@ -21,3 +21,4 @@ This is a learning project. Subin is new to programming. She's building this app
 - **The check-in screen** (`ui/checkin.html` and `ui/checkin.js`) and the QR code (`ui/qr.js`) are finished and tested. Don't change them. If they seem to need a change, tell Subin to ask Richard.
 - **Tests** use Node's built-in test runner (`node:test` and `node:assert/strict`), and live in `tests/`. Run them with `npm test`.
 - **Numbers.** Keep them at full precision, and only round when showing them on screen.
+- **AI overviews** are Richard's part: `core/overview.js`, `api/overview.js` and `ui/overview.js`. They explain existing numbers; they never replace the calculations. Leave them alone while building the welcome and tips screens.

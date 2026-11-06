@@ -5,6 +5,8 @@ import { sessionNumbers } from "../core/numbers.js";
 import { peopleToCheckOn, REASON_TEXT } from "../core/insights.js";
 import { el, getParam, urlFor, showError, formatNumber, labelFor, ACTIVITY_TYPES } from "./app.js";
 import { drawPicture, pictureKey } from "./picture.js";
+import { sessionOverviewData } from "../core/overview.js";
+import { overviewCard } from "./overview.js";
 
 const groupId = getParam("group");
 const sessionNumber = Number(getParam("session"));
@@ -62,6 +64,7 @@ function draw(group, session) {
         "Nobody is marked as here for this session, so there are no results yet. ",
         el("a", { href: sessionLink }, "Tick who's here on the session screen."))
       : [
+        overviewCard(sessionOverviewData(group, session.number)),
         stats(sessionNumbers(group, session.number)),
         el("section", { className: "card" },
           el("h2", {}, "Who connected"),
