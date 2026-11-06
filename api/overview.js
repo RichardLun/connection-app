@@ -1,28 +1,41 @@
 import { validateOverviewData } from "../core/overview.js";
 
-const MODEL = "claude-haiku-5-5";
+const MODEL = "claude-sonnet-5-5";
 const CACHE_MS = 60 * 60 * 1000;
 const MAX_BODY_BYTES = 8192;
 const SYSTEM = `You explain precomputed youth-group connection reports to a busy group leader.
-Write 120-180 words in three short plain-text paragraphs: an overview, something to watch,
-and one practical idea for the next session. No Markdown, HTML, jargon, or em dashes.
+Write no more than 120 words TOTAL, in three short plain-text paragraphs:
+1. The main takeaway, in two sentences.
+2. One thing to watch or a gap in the information, in one or two sentences.
+3. One practical idea for next session and a brief reminder about the limits, in two sentences.
+Do not walk through the table or define every metric. Choose the most useful facts and
+leave out unremarkable numbers. No headings, Markdown, HTML, jargon, or em dashes.
 Use only the supplied numbers. Do not calculate new scores, label the group good or bad,
 invent people or activities, diagnose kids, or claim a cause or a trend from two sessions.
+Prefer coverage, missing information, people with no reported connections, and paired
+feelings over secondary metrics. You do not need to mention density or centralization.
+Reported interactions and feelings are different measures. Never infer that people with
+no connections failed to feel better: averages do not tell you whose feelings changed.
 
 Definitions:
 present = people marked as attending. answered = returned check-ins, including blank ones.
+Say "returned a check-in", not that everyone answered all questions.
+If answered equals present, no check-ins are missing. An unknown status can still come
+from a returned check-in with unanswered ratings; never count unknown as missing check-ins.
 A connection exists when either person reported working with or talking to the other.
 These are reported interactions in this session, not proof of friendship or its absence.
 density is the share of POSSIBLE PAIRS that connected, not the share of people connected.
 centralization runs from 0 (equal degrees) to 1 (a star). Explain it as connections being
-concentrated around fewer people; you cannot identify who those people are.
+concentrated around fewer people. You have only aggregates, so do not identify specific
+people. The network picture in the app can help the leader see who is involved.
 averageLinks is reported connections per person, on average.
 isolates = no connections and at least one rating answered.
 unknown = no connections and neither rating answered, whether the check-in was blank or absent.
 Do not call unknown people isolated or claim all of them failed to return a check-in.
+Say "people with no reported connections" rather than labeling people "isolated".
 Q4 measures closeness to the group, from 1 to 7. Q5 measures belonging, from 1 to 5.
 The averages exclude skipped questions. null means not enough information, never zero.
-Always qualify ratings with the number of answers and their scale. Missing check-ins limit
+For any ratings you mention, include the number of answers and their scale. Missing check-ins limit
 what the network tells us. One session is a snapshot, not a trend.
 
 For comparisons:
@@ -30,12 +43,14 @@ before.numbers and after.numbers describe the entire attendance of each session.
 Only comparison.q4 and comparison.q5 compare the same people who attended AND answered
 that question both times. Use those paired means for changes in feelings, never differences
 between whole-session rating averages. The Q4 and Q5 paired sample sizes can differ.
+Do not infer that the same people answered both questions just because the counts match.
 New/lost connections count only pairs of people attending both sessions.
 stillIsolated counts people with no connections and nonblank ratings in both sessions.
 When paired feelings rise but people remain isolated, make that contrast clear and kind.
 If nobody attended both sessions, say a like-for-like comparison is not possible.
 If a paired question has count 0, do not claim its ratings rose, fell, or stayed the same.
-Any suggested next step is a possibility for the leader to consider, not a conclusion.`;
+Two sessions do not establish a lasting trend. Any suggested next step is a possibility
+for the leader to consider, not a conclusion.`;
 
 function reply(body, status = 200, headers = {}) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
@@ -114,10 +129,13 @@ export function createOverviewHandler({
           signal: AbortSignal.timeout(30_000),
           body: JSON.stringify({
             model: MODEL, max_tokens: 700,
-            thinking: { type: "disabled" },
-            output_config: { effort: "low" },
+            thinking: { type: "between_tools" },
+            output_config: { effort: "medium" },
             system: SYSTEM,
-            messages: [{ role: "user", content: `Explain this report:\n${key}` }],
+            messages: [{
+              role: "user",
+              content: `Give the main takeaway, one thing to watch, and one next step. At most 120 words total in three short paragraphs; do not list the table.\n${key}`,
+            }],
           }),
         });
         if (!response.ok) {

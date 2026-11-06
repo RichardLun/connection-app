@@ -40,4 +40,4 @@ global spending cap or a replacement for leader authentication.
 For local testing with the API, use `npm run dev:ai` (requires the Vercel CLI).
 `npm run dev` still runs the static screens, but not the server endpoint.
 Use Vercel's environment settings or a gitignored local environment file for
-the key. The current model is `claude-haiku-5-5`.
+the key. The current model is `claude-sonnet-5-5`.
