@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npx --yes serve .",
+    "dev:ai": "vercel dev",
     "test": "node --test"
   },
   "engines": {

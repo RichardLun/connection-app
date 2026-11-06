@@ -51,8 +51,12 @@ function cleanChildren(children) {
 
 // Shows a red message at the top of the page, so a failed save or load is
 // never silent. The full error also goes to the console.
-export function showError(error) {
+export function showError(error, target) {
   console.error(error);
+  if (target) {
+    target.replaceChildren(el("p", { className: "error", role: "alert" }, error.message ?? String(error)));
+    return;
+  }
   let box = document.getElementById("error");
   if (!box) {
     box = el("p", { id: "error", className: "error", role: "alert" });
