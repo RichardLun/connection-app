@@ -203,6 +203,23 @@ ul.list li:last-child {
   border-bottom: none;
 }
 
+/* A list item with its text on the left and buttons on the right. */
+ul.list li.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+ul.list li.row > :first-child {
+  flex: 1;
+}
+
+/* The rename form fills the whole row instead of squeezing to one side. */
+ul.list li.row > form {
+  flex-basis: 100%;
+}
+
 /* Big numbers with a label under each, for the results screens. */
 .stats {
   display: grid;
