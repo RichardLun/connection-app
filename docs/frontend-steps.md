@@ -61,7 +61,7 @@ Groups  →  Group  →  Session  →  Check-in (kids)
 
 Kids get to the check-in by scanning the QR code on the session screen with their phone's camera. Kids without a phone use the leader's phone instead: the session screen's "Check in on this device" button opens the check-in with `&shared=1` at the end of the address. That version gets ready for the next kid after each one, and has a link back to the session screen.
 
-The part of an address after the `?` tells the screen what to show. `group=ID` is the group's id, and `session=N` is the session's number (1, 2, 3 and so on), not its id. The app's home page sends you straight to the groups screen.
+The part of an address after the `?` tells the screen what to show. `group=ID` is the group's id, and `session=N` is the session's number (1, 2, 3 and so on), not its id. The app's home page opens the welcome screen, which explains the app and has a "Get started" button to the groups screen. The "?" in the corner of every leader screen opens it again.
 
 The screens for a group all work roughly the same way:
 1. Read the group id, and the session number if it needs one, from the address with `getParam`. Everything in an address is text, so turn the session number into a real number with `Number(getParam("session"))`. Otherwise session `"1"` won't match session `1`.
@@ -164,7 +164,7 @@ fails. Explain your plan before writing any code.
 ```
 
 **How to test it:**
-1. Run `npm run dev` and open the link. The home page should take you to the groups screen.
+1. Run `npm run dev` and open the link. The home page should show the welcome screen. Click "Get started" to go to the groups screen.
 2. You should see Practice group, Fake site (test data), Tiny example and Test club, newest first.
 3. Add a group called "My test group", ages 11-13, program type Sports. You should land on its group screen. It's still the starter page, but the address should end with `group.html?group=` and an id.
 4. Click "Connected" at the top of the page to get back to the groups screen. "My test group" is at the top of the list, with "11-13" and "Sports".
