@@ -13,6 +13,38 @@
     <h1>Session</h1>
     <p class="muted">This screen gets built in Step 13 of docs/frontend-steps.md.</p>
   </main>
+  <dialog id="tips" class="tips" aria-labelledby="tips-title">
+    <div>
+      <h2 id="tips-title">On this page</h2>
+      <h3>Who's here</h3>
+      <ul>
+        <li>Tick each kid who came, or use <strong>Tick everyone</strong>, then click <strong>Save</strong>.</li>
+        <li>Only kids ticked as here count in the results. If a kid checks in but isn't ticked, their answers won't count until you tick them.</li>
+      </ul>
+      <h3>Checking in</h3>
+      <ul>
+        <li>Kids scan the QR code with their phone's camera, or you can copy the link and send it to them.</li>
+        <li>For kids without a phone, <strong>Check in on this device</strong> lets them take turns on yours.</li>
+        <li>The check-ins list shows who hasn't checked in yet. Click <strong>Refresh</strong> to update it.</li>
+        <li>If a kid checks in twice, their new answers replace the old ones.</li>
+      </ul>
+      <h3>What the check-in asks</h3>
+      <ol>
+        <li>Who did you work with today?</li>
+        <li>Who did you talk to today?</li>
+        <li>Who did you already know before you joined this group? Kids only see this at their very first check-in in the group.</li>
+        <li>How close do you feel to this group? Kids pick a picture of two circles, from 1 (apart) to 7 (overlapping a lot).</li>
+        <li>How much do you feel you belong in this group? From 1 (not at all) to 5 (very much).</li>
+        <li>Did you stay for the whole session?</li>
+        <li>Was today your first time at this group?</li>
+      </ol>
+      <p>Kids can pick nobody, or skip a question.</p>
+      <h3>Results</h3>
+      <p>Click <strong>See results</strong> to see the numbers and the network picture for this session.</p>
+      <form method="dialog"><button>Close</button></form>
+    </div>
+  </dialog>
   <script type="module" src="session.js"></script>
+  <script type="module" src="tips.js"></script>
 </body>
 </html>

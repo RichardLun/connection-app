@@ -13,6 +13,18 @@
     <h1>Groups</h1>
     <p class="muted">This screen gets built in Step 11 of docs/frontend-steps.md.</p>
   </main>
+  <dialog id="tips" class="tips" aria-labelledby="tips-title">
+    <div>
+      <h2 id="tips-title">On this page</h2>
+      <ol>
+        <li>Under <strong>Add a group</strong>, name your group, add the age range, choose the program type, and click <strong>Save</strong>.</li>
+        <li>Your new group's page opens straight away. You've created your first group! There you can add kids and start a session.</li>
+        <li>When you come back here, your groups are listed with the newest at the top. Click a group to open it.</li>
+      </ol>
+      <form method="dialog"><button>Close</button></form>
+    </div>
+  </dialog>
   <script type="module" src="groups.js"></script>
+  <script type="module" src="tips.js"></script>
 </body>
 </html>

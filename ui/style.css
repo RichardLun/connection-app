@@ -33,11 +33,11 @@ body {
   line-height: 1.5;
 }
 
-/* The app name on the left, the help icon on the right. */
+/* The app name on the left, the tips and help icons on the right. */
 header.top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
   background: var(--card);
   border-bottom: 1px solid var(--line);
   padding: 0.75rem 1rem;
@@ -49,20 +49,56 @@ header.top a {
   text-decoration: none;
 }
 
-/* The "?" that opens the welcome screen again. */
-header.top a.help {
+/* Pushes the icons over to the right. */
+header.top > :first-child {
+  margin-right: auto;
+}
+
+/* The "?" that opens the welcome screen again, and the tips lightbulb.
+   The lightbulb is a button, so this also undoes the usual button look. */
+header.top .help {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   width: 2rem;
   height: 2rem;
+  padding: 0;
   border: 2px solid var(--primary);
   border-radius: 50%;
+  background: var(--card);
   color: var(--primary);
 }
 
-header.top a.help:hover {
+header.top .help:hover {
   background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+/* The tips sheet. The padding is on the box inside, so that a tap on the
+   sheet never counts as a tap on the dimmed area around it. */
+dialog.tips {
+  width: calc(100% - 2rem);
+  max-width: 36rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  color: var(--text);
+}
+
+dialog.tips::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+dialog.tips > div {
+  padding: 1.25rem 1.5rem;
+}
+
+dialog.tips h2 {
+  margin-top: 0;
+}
+
+dialog.tips li {
+  margin-bottom: 0.5rem;
 }
 
 /* Numbered steps with a little space between them, for the welcome screen. */

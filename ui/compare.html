@@ -12,6 +12,39 @@
   <main>
     <p class="muted">Loading...</p>
   </main>
+  <dialog id="tips" class="tips" aria-labelledby="tips-title">
+    <div>
+      <h2 id="tips-title">On this page</h2>
+      <h3>Choosing sessions</h3>
+      <ul>
+        <li>Pick a <strong>Before</strong> and an <strong>After</strong> session. The page starts with your first and latest sessions, and updates as soon as you pick others.</li>
+        <li>The numbers only count kids who came to both sessions. That way, a change in who showed up doesn't look like a change in how kids got on.</li>
+      </ul>
+      <h3>The numbers</h3>
+      <ul>
+        <li><strong>Kids at both sessions:</strong> how many kids were here both times.</li>
+        <li><strong>New connections:</strong> pairs of kids who connected in After but not in Before.</li>
+        <li><strong>Lost connections:</strong> pairs who connected in Before but not in After.</li>
+        <li><strong>Kids with no connections both times:</strong> kids who checked in both times but had no connections either time.</li>
+      </ul>
+      <h3>The pictures</h3>
+      <ul>
+        <li>Before and After, with the same colours as on the results page: blue for connected, orange for no connections, hollow grey for didn't check in. Bigger dots have more connections.</li>
+        <li><strong>Green lines</strong> in After are new connections, and the kids in them get a green border.</li>
+      </ul>
+      <h3>The warning</h3>
+      <p>A yellow warning shows when the numbers point in different directions. For example, kids say they feel closer, but some kids had no connections both times. Or kids feel less close, but new connections formed. It's a sign to look at the whole picture, not just one number.</p>
+      <h3>How kids felt</h3>
+      <ul>
+        <li>The table shows the two feeling questions: Q4 (how close kids feel, 1 to 7) and Q5 (how much they belong, 1 to 5).</li>
+        <li><strong>Before</strong> and <strong>After</strong> are the average answers in each session.</li>
+        <li><strong>Change</strong> is After minus Before. A + means it went up.</li>
+        <li><strong>Kids</strong> is how many kids answered that question both times. Only they're counted, so a kid who skipped once doesn't move the average.</li>
+      </ul>
+      <form method="dialog"><button>Close</button></form>
+    </div>
+  </dialog>
   <script type="module" src="compare.js"></script>
+  <script type="module" src="tips.js"></script>
 </body>
 </html>
