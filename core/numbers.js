@@ -27,8 +27,10 @@ export function centralization(network) {
   return total / ((n - 1) * (n - 2));
 }
 
-export function sessionNumbers(group, sessionNumber) {
-  const network = buildNetwork(group, sessionNumber);
+// relation picks which ticks make a link (see RELATIONS in core/network.js).
+// Every screen uses the default, worked with or talked to.
+export function sessionNumbers(group, sessionNumber, { relation = "either" } = {}) {
+  const network = buildNetwork(group, sessionNumber, { relation });
   const session = group.sessions.find((s) => s.number === sessionNumber);
   const n = network.people.length;
   const links = network.links.length;
