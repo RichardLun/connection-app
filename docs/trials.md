@@ -72,7 +72,9 @@ now makes it an explicit setting:
   support before anyone has checked in, so a promise made to kids is never
   broken afterwards.
 - Groups made before November 2026 kept leader support, which is how they
-  already worked. All of them are test groups.
+  already worked. All of them are test groups. The database default is
+  still leader support, because the live site's older group screen doesn't
+  ask; the new screens always save a choice, group-only unless picked.
 - Tell kids (and parents, if needed) which one the group uses before they
   check in.
 

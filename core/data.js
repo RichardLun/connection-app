@@ -4,9 +4,10 @@
 import { supabase } from "../lib/supabase.js";
 
 // groupType, checkInMode and reportPrivacy use the values in core/settings.js.
-// Left out, the database picks a regular group with names and interactions,
-// and group-only reports.
-export async function createGroup(name, { ageRange, programType, groupType, checkInMode, reportPrivacy } = {}) {
+// Left out, it's a regular group with names and interactions, and group-only
+// reports. Group-only is set here because the database default is leader
+// support, which the live site's older group screen relies on.
+export async function createGroup(name, { ageRange, programType, groupType, checkInMode, reportPrivacy = "group_only" } = {}) {
   const { data, error } = await supabase
     .from("groups")
     .insert({
