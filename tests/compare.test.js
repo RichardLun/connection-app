@@ -38,7 +38,8 @@ test("fake site: comparing session 1 and session 2", () => {
   assert.equal(comparison.q5.count, 14);
   assert.equal(
     comparison.warning,
-    "Average Q4 rose by 1.00 and average Q5 rose by 1.00, but 2 people were isolated in both sessions.",
+    "Average closeness to the group (Q4) rose by 1.00 and average belonging (Q5) rose by 1.00, " +
+      "but 2 kids had no reported connections in both sessions.",
   );
 });
 
@@ -63,22 +64,22 @@ function comparison(q4Change, q5Change, stillIsolated, newLinks) {
 test("warning table: Q4 rose while kids stayed isolated", () => {
   assert.equal(
     warningSentence(comparison(0.6, 0, 2, 0)),
-    "Average Q4 rose by 0.60, but 2 people were isolated in both sessions.",
+    "Average closeness to the group (Q4) rose by 0.60, but 2 kids had no reported connections in both sessions.",
   );
 });
 
 test("warning table: Q5 fell while a new connection formed", () => {
   assert.equal(
     warningSentence(comparison(0, -0.4, 0, 1)),
-    "Average Q5 fell by 0.40, but 1 new connection formed.",
+    "Average belonging (Q5) fell by 0.40, but 1 new connection formed.",
   );
 });
 
 test("warning table: one rose and one fell", () => {
   assert.equal(
     warningSentence(comparison(0.5, -0.25, 1, 3)),
-    "Average Q4 rose by 0.50, but 1 person was isolated in both sessions; " +
-      "average Q5 fell by 0.25, but 3 new connections formed.",
+    "Average closeness to the group (Q4) rose by 0.50, but 1 kid had no reported connections in both sessions; " +
+      "average belonging (Q5) fell by 0.25, but 3 new connections formed.",
   );
 });
 

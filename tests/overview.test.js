@@ -15,7 +15,7 @@ test("session overview reuses the calculated numbers without including personal 
   const original = structuredClone(group);
   const data = sessionOverviewData(group, 1);
   assert.deepEqual(data, {
-    kind: "session", session: { number: 1, numbers: sessionNumbers(group, 1) },
+    kind: "session", privacy: "leader_support", session: { number: 1, numbers: sessionNumbers(group, 1) },
   });
   const json = JSON.stringify(data);
   for (const value of [group.id, group.name, group.sessions[0].id, group.sessions[0].activityNote, ...group.people.flatMap((p) => [p.id, p.name])]) {

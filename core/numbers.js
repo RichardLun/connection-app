@@ -40,6 +40,9 @@ export function sessionNumbers(group, sessionNumber) {
   // as 0, stops a skip from dragging the average down.
   const q4s = answers.map((answer) => answer.q4).filter((q4) => typeof q4 === "number");
   const q5s = answers.map((answer) => answer.q5).filter((q5) => typeof q5 === "number");
+  // Identification (1 to 7) replaced Q5 (1 to 5) for new sessions. It's a
+  // different question, so it gets its own average instead of joining Q5's.
+  const identifications = answers.map((answer) => answer.identification).filter((value) => typeof value === "number");
 
   const statuses = Object.values(network.status);
 
@@ -57,10 +60,12 @@ export function sessionNumbers(group, sessionNumber) {
     q4Count: q4s.length,
     q5Average: average(q5s),
     q5Count: q5s.length,
+    identificationAverage: average(identifications),
+    identificationCount: identifications.length,
   };
 }
 
-function average(values) {
+export function average(values) {
   if (values.length === 0) {
     return null;
   }

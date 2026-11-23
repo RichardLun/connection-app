@@ -1,9 +1,17 @@
 import { sessionNumbers } from "./numbers.js";
 import { compareSessions } from "./compare.js";
+import { showsIndividuals } from "./settings.js";
+
+// Tells the AI whether this group promised group-only reports, so it never
+// suggests singling kids out for a group that didn't agree to that.
+function privacy(group) {
+  return showsIndividuals(group) ? "leader_support" : "group_only";
+}
 
 export function sessionOverviewData(group, sessionNumber) {
   return validateOverviewData({
     kind: "session",
+    privacy: privacy(group),
     session: { number: sessionNumber, numbers: sessionNumbers(group, sessionNumber) },
   });
 }
@@ -12,6 +20,7 @@ export function comparisonOverviewData(group, before, after) {
   const result = compareSessions(group, before, after);
   return validateOverviewData({
     kind: "comparison",
+    privacy: privacy(group),
     before: { number: before, numbers: sessionNumbers(group, before) },
     after: { number: after, numbers: sessionNumbers(group, after) },
     comparison: {
@@ -21,6 +30,7 @@ export function comparisonOverviewData(group, before, after) {
       stillIsolated: result.stillIsolated,
       q4: result.q4,
       q5: result.q5,
+      identification: result.identification,
     },
   });
 }
@@ -29,28 +39,33 @@ export function comparisonOverviewData(group, before, after) {
 // forwarding a group object, a name, or text someone could use as a prompt.
 export function validateOverviewData(data) {
   if (data?.kind === "session") {
-    record(data, ["kind", "session"]);
-    return { kind: "session", session: validateSession(data.session) };
+    record(data, ["kind", "privacy", "session"]);
+    return { kind: "session", privacy: validatePrivacy(data.privacy), session: validateSession(data.session) };
   }
   if (data?.kind !== "comparison") throw new TypeError("Choose a session or comparison overview.");
-  record(data, ["kind", "before", "after", "comparison"]);
+  record(data, ["kind", "privacy", "before", "after", "comparison"]);
+  const privacy = validatePrivacy(data.privacy);
   const before = validateSession(data.before);
   const after = validateSession(data.after);
   if (before.number === after.number) throw new TypeError("Choose two different sessions.");
   const c = data.comparison;
-  record(c, ["bothPresent", "newLinks", "lostLinks", "stillIsolated", "q4", "q5"]);
+  record(c, ["bothPresent", "newLinks", "lostLinks", "stillIsolated", "q4", "q5", "identification"]);
   count(c.bothPresent, Math.min(before.numbers.present, after.numbers.present));
   count(c.newLinks, after.numbers.links);
   count(c.lostLinks, before.numbers.links);
   count(c.stillIsolated, Math.min(c.bothPresent, before.numbers.isolates, after.numbers.isolates));
   if (c.newLinks + c.lostLinks > c.bothPresent * (c.bothPresent - 1) / 2) invalid();
   return {
-    kind: "comparison", before, after,
+    kind: "comparison", privacy, before, after,
     comparison: {
       bothPresent: c.bothPresent, newLinks: c.newLinks,
       lostLinks: c.lostLinks, stillIsolated: c.stillIsolated,
       q4: validatePaired(c.q4, 7, Math.min(c.bothPresent, before.numbers.q4Count, after.numbers.q4Count)),
       q5: validatePaired(c.q5, 5, Math.min(c.bothPresent, before.numbers.q5Count, after.numbers.q5Count)),
+      identification: validatePaired(
+        c.identification, 7,
+        Math.min(c.bothPresent, before.numbers.identificationCount, after.numbers.identificationCount),
+      ),
     },
   };
 }
@@ -63,6 +78,7 @@ function validateSession(session) {
   const fields = [
     "present", "answered", "links", "density", "isolates", "unknown",
     "centralization", "averageLinks", "q4Average", "q4Count", "q5Average", "q5Count",
+    "identificationAverage", "identificationCount",
   ];
   record(n, fields);
   count(n.present);
@@ -72,8 +88,10 @@ function validateSession(session) {
   count(n.unknown, n.present - n.isolates);
   count(n.q4Count, n.answered);
   count(n.q5Count, n.answered);
+  count(n.identificationCount, n.answered);
   average(n.q4Average, n.q4Count, 7);
   average(n.q5Average, n.q5Count, 5);
+  average(n.identificationAverage, n.identificationCount, 7);
   if (n.present < 2) {
     if (n.density !== null) invalid();
   } else {
@@ -92,6 +110,11 @@ function validateSession(session) {
     equal(n.averageLinks, 2 * n.links / n.present);
   }
   return { number: session.number, numbers: Object.fromEntries(fields.map((key) => [key, n[key]])) };
+}
+
+function validatePrivacy(value) {
+  if (value !== "group_only" && value !== "leader_support") invalid();
+  return value;
 }
 
 function validatePaired(rating, maximum, limit) {
