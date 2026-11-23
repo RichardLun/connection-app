@@ -1,5 +1,11 @@
 # Build steps: the frontend
 
+> **Changed in November 2026 (Richard).** The screens gained group settings
+> (single activity, survey-only check-ins, group-only reports), a learning
+> question, a Nobody button on the check-in, and a new group report screen
+> (`ui/report.html`). The steps below still describe how the first version was
+> built. For what changed and how it works, read `docs/trials.md`.
+
 ## How this doc works
 
 The backend is done. This doc covers the frontend: the screens that leaders and kids use. It works the same way as the backend guide:
