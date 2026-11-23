@@ -233,12 +233,13 @@ export async function loadGroup(groupId) {
     .order("number");
   if (sessionsError) throw sessionsError;
 
+  // Fetched side by side rather than one after another, so a slow
+  // connection waits for one round trip instead of five.
   const sessionIds = sessions.map((session) => session.id);
-  const attendance = await rowsForSessions("attendance", sessionIds);
-  const answers = await rowsForSessions("answers", sessionIds);
-  const ticks = await rowsForSessions("ticks", sessionIds);
-  const anonymousAnswers = await rowsForSessions("anonymous_answers", sessionIds);
-  const learningAnswers = await rowsForSessions("learning_answers", sessionIds);
+  const [attendance, answers, ticks, anonymousAnswers, learningAnswers] = await Promise.all(
+    ["attendance", "answers", "ticks", "anonymous_answers", "learning_answers"]
+      .map((table) => rowsForSessions(table, sessionIds)),
+  );
   const shared = (row) => ({
     q4: row.q4,
     q5: row.q5,
