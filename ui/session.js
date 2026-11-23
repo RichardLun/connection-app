@@ -1,8 +1,11 @@
 // The session screen: who's here, check-in progress, and links to the check-in and results.
 // Open it as session.html?group=GROUP_ID&session=SESSION_NUMBER.
-import { loadGroup, setPresent } from "../core/data.js";
+import { loadGroup, setPresent, updateSession } from "../core/data.js";
 import { sessionNumbers } from "../core/numbers.js";
-import { el, getParam, urlFor, fullUrl, showError, labelFor, ACTIVITY_TYPES } from "./app.js";
+import { sessionQuestions, hasNetwork } from "../core/questions.js";
+import { CHECK_IN_TIMINGS, optionLabel, usesNames, asksInteractions, sessionWord } from "../core/settings.js";
+import { checkIns as countedCheckIns } from "../core/responses.js";
+import { el, getParam, urlFor, fullUrl, showError, labelFor, kindTag, ACTIVITY_TYPES } from "./app.js";
 import { qrCode } from "./qr.js";
 
 const groupId = getParam("group");
@@ -46,7 +49,7 @@ async function start() {
     );
     return;
   }
-  document.title = `Session ${session.number} · ${group.name} · Connected`;
+  document.title = `${title()} · ${group.name} · Connected`;
   draw();
 }
 
@@ -60,15 +63,108 @@ function draw(saved = false) {
   showCheckIns();
   fill(main,
     backLink(),
-    el("h1", {}, `Session ${session.number}`),
+    el("h1", {}, title()),
     details ? el("p", { className: "muted" }, details) : null,
     session.activityNote ? el("p", {}, session.activityNote) : null,
-    whosHere(saved),
+    planCard(),
+    usesNames(group) ? whosHere(saved) : headcount(saved),
     checkInLinks(),
     checkIns,
     el("div", { className: "actions" },
-      el("a", { className: "button", href: urlFor("results.html", { group: group.id, session: session.number }) }, "See results"),
+      asksInteractions(group) && hasNetwork(session)
+        ? el("a", { className: "button", href: urlFor("results.html", { group: group.id, session: session.number }) }, "See results")
+        : null,
+      el("a", { className: "button secondary", href: urlFor("report.html", { group: group.id, session: session.number }) }, "Group report"),
     ),
+  );
+}
+
+function title() {
+  return group.groupType === "single_activity" ? "Activity" : `Session ${session.number}`;
+}
+
+// What this check-in asks, and when. The goal can change any time; the
+// learning question only until the first kid checks in, so everyone who
+// answers it was asked the same thing.
+function planCard() {
+  const started = session.answers.length > 0 || (session.anonymousAnswers ?? []).length > 0;
+  const goal = el("textarea", { id: "goal", rows: 2, maxLength: 500, value: session.activityGoal ?? "" });
+  const learning = el("textarea", {
+    id: "learning", rows: 2, maxLength: 500, value: session.learningQuestion ?? "", disabled: started,
+  });
+  const status = el("span", { className: "muted" });
+  const save = el("button", { type: "submit", className: "secondary" }, "Save");
+
+  async function onSubmit(event) {
+    event.preventDefault();
+    save.disabled = true;
+    status.textContent = "Saving...";
+    try {
+      const changes = { activityGoal: goal.value.trim() || null };
+      if (!started) changes.learningQuestion = learning.value.trim() || null;
+      await updateSession(session.id, changes);
+      await load();
+    } catch (error) {
+      showError(error);
+      status.textContent = "";
+      save.disabled = false;
+      return;
+    }
+    draw();
+  }
+
+  return el("form", { className: "card", onsubmit: onSubmit },
+    el("h2", {}, "What this check-in asks"),
+    el("p", { className: "muted" }, `When: ${optionLabel(CHECK_IN_TIMINGS, session.checkInTiming) || "not recorded"}`),
+    el("ul", { className: "list" },
+      sessionQuestions(session).map((q) => el("li", {}, kindTag(q.kind), q.wording ?? "")),
+    ),
+    el("label", { htmlFor: "goal" }, "Activity goal"),
+    el("p", { className: "muted field-hint" }, "Optional. What kids should be able to identify or do afterwards."),
+    goal,
+    el("label", { htmlFor: "learning" }, "Learning question"),
+    el("p", { className: "muted field-hint" },
+      started
+        ? "Kids have started checking in, so the learning question can't change now."
+        : "Optional. Shown to kids at check-in when filled in."),
+    learning,
+    el("div", { className: "actions" }, save, status),
+  );
+}
+
+// Groups without names can't tick who's here, so the leader types how many
+// took part. The report needs it to say how many answered out of how many.
+function headcount(saved) {
+  const count = el("input", { type: "number", id: "attended", min: 0, step: 1, value: session.attendedCount ?? "" });
+  const status = el("span", { className: "muted" }, saved ? "Saved" : "");
+  const save = el("button", { type: "submit" }, "Save");
+
+  async function onSubmit(event) {
+    event.preventDefault();
+    const value = count.value === "" ? null : Number(count.value);
+    if (value !== null && (!Number.isInteger(value) || value < 0)) {
+      count.reportValidity();
+      return;
+    }
+    save.disabled = true;
+    status.textContent = "Saving...";
+    try {
+      await updateSession(session.id, { attendedCount: value });
+      await load();
+    } catch (error) {
+      showError(error);
+      status.textContent = "";
+      save.disabled = false;
+      return;
+    }
+    draw(true);
+  }
+
+  return el("form", { className: "card", onsubmit: onSubmit },
+    el("h2", {}, "How many took part"),
+    el("label", { htmlFor: "attended" }, `Kids at this ${sessionWord(group).toLowerCase()}`),
+    count,
+    el("div", { className: "actions" }, save, status),
   );
 }
 
@@ -154,6 +250,19 @@ function checkInLinks() {
 
 // Fills in the Check-ins part from the group as it was last loaded.
 function showCheckIns() {
+  const refreshButton = el("div", { className: "actions" },
+    el("button", { type: "button", className: "secondary", onclick: refresh }, "Refresh"));
+  if (!usesNames(group)) {
+    const done = countedCheckIns(group, session).length;
+    const outOf = session.attendedCount === null || session.attendedCount === undefined ? "" : ` of ${session.attendedCount} who took part`;
+    fill(checkIns,
+      el("h2", {}, "Check-ins"),
+      el("p", {}, el("strong", {}, `${done} checked in${outOf}`)),
+      refreshButton,
+    );
+    return;
+  }
+
   const numbers = sessionNumbers(group, session.number);
   const answered = new Set(session.answers.map((answer) => answer.personId));
   const kids = byName(group.people);
@@ -169,7 +278,7 @@ function showCheckIns() {
         `${nameList.format(notHere)} ${notHere.length === 1 ? "has" : "have"} checked in but ${notHere.length === 1 ? "isn't" : "aren't"} marked as here. ` +
         "Their answers won't count unless they're ticked.")
       : null,
-    el("div", { className: "actions" }, el("button", { type: "button", className: "secondary", onclick: refresh }, "Refresh")),
+    refreshButton,
   );
 }
 

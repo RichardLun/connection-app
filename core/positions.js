@@ -1,8 +1,12 @@
 // Where each kid's dot goes in the network picture. The rules are in
 // Step 10 of docs/build-steps.md.
 
-export function circlePositions(group) {
-  const people = [...group.people].sort((x, y) => x.name.localeCompare(y.name) || x.id.localeCompare(y.id));
+// Kids go round in name order, so a leader can find a name. When names are
+// hidden (group-only reports), they go in id order instead, which says
+// nothing about who is where.
+export function circlePositions(group, { byName = true } = {}) {
+  const people = [...group.people].sort((x, y) =>
+    (byName ? x.name.localeCompare(y.name) : 0) || x.id.localeCompare(y.id));
   const n = people.length;
   const gap = 2 * Math.PI / n;
 

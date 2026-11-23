@@ -2,7 +2,9 @@
 // Open it as compare.html?group=GROUP_ID, or add &a=1&b=2 to pick the sessions.
 import { loadGroup } from "../core/data.js";
 import { compareSessions, newLinkPairs } from "../core/compare.js";
-import { el, getParam, urlFor, showError, formatNumber } from "./app.js";
+import { QUESTIONS } from "../core/questions.js";
+import { CHECK_IN_TIMINGS, optionLabel, isSingleActivity } from "../core/settings.js";
+import { el, getParam, urlFor, showError, formatNumber, kindTag } from "./app.js";
 import { drawPicture, pictureKey } from "./picture.js";
 import { comparisonOverviewData } from "../core/overview.js";
 import { overviewCard } from "./overview.js";
@@ -42,6 +44,10 @@ async function start() {
     el("p", { className: "muted" }, group.name),
     el("h1", {}, "Compare sessions"),
   ];
+  if (isSingleActivity(group)) {
+    main.replaceChildren(...header, el("p", { className: "card" }, "This is a single activity, so there's nothing to compare."));
+    return;
+  }
   if (group.sessions.length < 2) {
     main.replaceChildren(...header, el("p", { className: "card" }, "This group needs at least 2 sessions to compare."));
     return;
@@ -99,18 +105,71 @@ function showComparison(group, a, b) {
 
   const result = compareSessions(group, a, b);
   comparison.replaceChildren(...[
+    warnings(result, a, b).map((text) => el("p", { className: "warning" }, text)),
     result.warning ? el("p", { className: "warning" }, result.warning) : null,
-    overviewCard(comparisonOverviewData(group, a, b)),
-    pictures(group, a, b),
-    el("p", { className: "muted" }, "Only kids who came to both sessions are compared."),
-    el("section", { className: "stats" },
-      stat(result.bothPresent, "Kids at both sessions"),
-      stat(result.newLinks, "New connections"),
-      stat(result.lostLinks, "Lost connections"),
-      stat(result.stillIsolated, "Kids with no connections both times"),
+    respondents(result, a, b),
+    result.hasNetwork ? overviewCard(comparisonOverviewData(group, a, b)) : null,
+    result.hasNetwork
+      ? [
+        el("h2", {}, kindTag("interaction"), "Who worked with or talked to whom"),
+        pictures(group, a, b),
+        el("p", { className: "muted" }, "Only kids who came to both sessions are compared."),
+        el("section", { className: "stats" },
+          stat(result.bothPresent, "Kids at both sessions"),
+          stat(result.newLinks, "New connections"),
+          stat(result.lostLinks, "Lost connections"),
+          stat(result.stillIsolated, "Answered both times, no reported connections both times"),
+        ),
+      ]
+      : el("p", { className: "card" }, "These sessions didn't ask who kids worked with or talked to, so there's no network to compare."),
+    ratings(result, a, b),
+  ].flat().filter(Boolean));
+}
+
+// Things that make the two sessions harder to compare, in plain words.
+function warnings(result, a, b) {
+  const list = [];
+  const r = result.respondents;
+  if (r.same === false) {
+    list.push(`Different kids checked in each time: ${r.checkedInBoth} both times, ${r.onlyBefore} only in session ${a}, ` +
+      `${r.onlyAfter} only in session ${b}. An average for everyone can change even if nobody feels any different, ` +
+      "so look at the \"Answered both times\" columns for changes.");
+  }
+  if (r.same === null) {
+    list.push("Check-ins are anonymous, so we can't tell whether the same kids answered both times. " +
+      "A change in the averages might only mean different kids answered.");
+  }
+  if (!result.questions.same) {
+    const names = (ids) => ids.map((id) => QUESTIONS[id].label).join(", ");
+    const parts = [];
+    if (result.questions.onlyBefore.length > 0) parts.push(`only session ${a} asked: ${names(result.questions.onlyBefore)}`);
+    if (result.questions.onlyAfter.length > 0) parts.push(`only session ${b} asked: ${names(result.questions.onlyAfter)}`);
+    list.push(`The sessions asked different questions (${parts.join("; ")}). Only questions asked both times are compared.`);
+  }
+  if (!result.timing.same) {
+    const when = (value) => optionLabel(CHECK_IN_TIMINGS, value).toLowerCase() || "not recorded";
+    list.push(`Kids checked in at different times: ${when(result.timing.before)} in session ${a}, ` +
+      `${when(result.timing.after)} in session ${b}. Answers given at different times may not be comparable.`);
+  }
+  return list;
+}
+
+function respondents(result, a, b) {
+  const r = result.respondents;
+  const show = (value) => (value === null ? "not recorded" : String(value));
+  return el("section", {},
+    el("h2", {}, "Who came and who answered"),
+    el("table", {},
+      el("thead", {}, el("tr", {}, ["", `Session ${a}`, `Session ${b}`].map((text) => el("th", {}, text)))),
+      el("tbody", {},
+        el("tr", {}, el("th", {}, "Attended"), el("td", {}, show(r.before.attended)), el("td", {}, show(r.after.attended))),
+        el("tr", {}, el("th", {}, "Checked in"), el("td", {}, String(r.before.checkedIn)), el("td", {}, String(r.after.checkedIn))),
+      ),
     ),
-    ratings(result),
-  ].filter(Boolean));
+    el("p", {}, r.checkedInBoth === null
+      ? "Checked in both times: can't tell, because check-ins are anonymous."
+      : `Checked in both times: ${r.checkedInBoth}`),
+  );
 }
 
 function pictures(group, a, b) {
@@ -130,21 +189,38 @@ function stat(value, label) {
   );
 }
 
-function ratings(result) {
-  const row = (question, rating) => el("tr", {},
-    el("th", {}, question),
-    el("td", {}, formatNumber(rating.before, 2)),
-    el("td", {}, formatNumber(rating.after, 2)),
-    el("td", {}, signed(rating.change)),
-    el("td", {}, String(rating.count)),
-  );
+// Each rating question on its own row, with its own scale. "Everyone" uses
+// every kid who answered that time; "answered both times" only kids who were
+// at both sessions and answered the question both times.
+function ratings(result, a, b) {
+  if (result.ratings.length === 0) return null;
+  const row = (rating) => {
+    const asked = rating.askedBefore && rating.askedAfter;
+    const n = (count) => ` (${count})`;
+    return el("tr", {},
+      el("th", {}, kindTag(QUESTIONS[rating.id].kind), `${rating.label}, ${rating.min} to ${rating.max}`),
+      el("td", {}, rating.askedBefore ? formatNumber(rating.everyone.before, 2) + n(rating.everyone.beforeCount) : "not asked"),
+      el("td", {}, rating.askedAfter ? formatNumber(rating.everyone.after, 2) + n(rating.everyone.afterCount) : "not asked"),
+      rating.paired && asked
+        ? [
+          el("td", {}, formatNumber(rating.paired.before, 2)),
+          el("td", {}, formatNumber(rating.paired.after, 2)),
+          el("td", {}, signed(rating.paired.change)),
+          el("td", {}, String(rating.paired.count)),
+        ]
+        : el("td", { colSpan: 4 }, asked ? "can't pair anonymous answers" : "asked only once"),
+    );
+  };
   return el("section", {},
     el("h2", {}, "How kids felt"),
-    el("table", {},
-      el("thead", {}, el("tr", {}, ["", "Before", "After", "Change", "Kids"].map((text) => el("th", {}, text)))),
-      el("tbody", {},
-        row("Q4: how close they feel to the group", result.q4),
-        row("Q5: how much they feel they belong", result.q5),
+    el("p", { className: "muted" }, "Each question is shown on its own and never added up into one score."),
+    el("div", { className: "table-scroll" },
+      el("table", {},
+        el("thead", {},
+          el("tr", {}, ["", `Everyone, session ${a}`, `Everyone, session ${b}`, "Answered both times: before", "after", "change", "kids"]
+            .map((text) => el("th", {}, text))),
+        ),
+        el("tbody", {}, result.ratings.map(row)),
       ),
     ),
   );

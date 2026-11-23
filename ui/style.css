@@ -386,3 +386,112 @@ td {
     grid-template-columns: 1fr;
   }
 }
+
+/* Group settings, the start form and the report (next-steps for trials). */
+h3 {
+  font-size: 1rem;
+  margin: 1.25rem 0 0.25rem;
+}
+
+fieldset.choice-list {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+fieldset.choice-list label.checkbox {
+  align-items: flex-start;
+}
+
+fieldset.choice-list input {
+  margin-top: 0.3rem;
+}
+
+fieldset.choice-list .field-hint {
+  display: block;
+  margin: 0.1rem 0 0;
+}
+
+/* Every result says what kind of question it comes from. */
+.kind {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+.kind-interaction { background: var(--primary-soft); color: var(--primary-dark); }
+.kind-belonging { background: #dcfce7; color: #166534; }
+.kind-learning { background: var(--warning-soft); color: var(--warning); }
+.kind-feedback { background: #f3e8ff; color: #6b21a8; }
+.kind-context { background: var(--background); color: var(--muted); }
+
+.question-result {
+  border-top: 1px solid var(--line);
+  padding: 0.75rem 0;
+}
+
+.question-result h3 {
+  margin-top: 0;
+}
+
+.counts {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.counts li {
+  display: grid;
+  grid-template-columns: minmax(7rem, 14rem) 1fr 2.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.2rem 0;
+}
+
+.bar {
+  height: 0.7rem;
+  min-width: 2px;
+  border-radius: 4px;
+  background: var(--primary);
+}
+
+.learning-answers li {
+  white-space: pre-wrap;
+}
+
+/* The report prints as a clean page, without buttons or forms. */
+@media print {
+  header.top,
+  .no-print,
+  .actions,
+  .ai-overview,
+  button {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  textarea {
+    border: none;
+    padding: 0;
+    resize: none;
+  }
+}
+
+/* Wide tables scroll sideways on a phone instead of squashing. */
+.table-scroll {
+  overflow-x: auto;
+}

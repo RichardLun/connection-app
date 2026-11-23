@@ -3,10 +3,20 @@
 // checks error itself. Otherwise a failed save would look like it worked.
 import { supabase } from "../lib/supabase.js";
 
-export async function createGroup(name, { ageRange, programType } = {}) {
+// groupType, checkInMode and reportPrivacy use the values in core/settings.js.
+// Left out, the database picks a regular group with names and interactions,
+// and group-only reports.
+export async function createGroup(name, { ageRange, programType, groupType, checkInMode, reportPrivacy } = {}) {
   const { data, error } = await supabase
     .from("groups")
-    .insert({ name, age_range: ageRange, program_type: programType })
+    .insert({
+      name,
+      age_range: ageRange,
+      program_type: programType,
+      group_type: groupType,
+      check_in_mode: checkInMode,
+      report_privacy: reportPrivacy,
+    })
     .select()
     .single();
   if (error) throw error;
@@ -20,6 +30,12 @@ export async function listGroups() {
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
+}
+
+// The screens check canSwitchPrivacy() from core/settings.js first.
+export async function setReportPrivacy(groupId, reportPrivacy) {
+  const { error } = await supabase.from("groups").update({ report_privacy: reportPrivacy }).eq("id", groupId);
+  if (error) throw error;
 }
 
 export async function addPerson(groupId, name) {
@@ -42,7 +58,11 @@ export async function listPeople(groupId) {
   return data;
 }
 
-export async function startSession(groupId, { date, activityType, activityNote } = {}) {
+// questions is the list of question ids from core/questions.js. Left out,
+// the session asks the original Connected questions.
+export async function startSession(groupId, {
+  date, activityType, activityNote, activityGoal, learningQuestion, questions, checkInTiming,
+} = {}) {
   const { data: last, error: findError } = await supabase
     .from("sessions")
     .select("number")
@@ -63,6 +83,10 @@ export async function startSession(groupId, { date, activityType, activityNote }
       date,
       activity_type: activityType,
       activity_note: activityNote,
+      activity_goal: activityGoal,
+      learning_question: learningQuestion,
+      questions,
+      check_in_timing: checkInTiming,
     })
     .select()
     .single();
@@ -99,62 +123,83 @@ export async function setPresent(sessionId, personIds) {
   }
 }
 
+// Only the fields given are changed: activityGoal, learningQuestion,
+// attendedCount (for groups without names), tryNext and howItWent.
+export async function updateSession(sessionId, changes) {
+  const columns = {
+    activityGoal: "activity_goal",
+    learningQuestion: "learning_question",
+    attendedCount: "attended_count",
+    tryNext: "try_next",
+    howItWent: "how_it_went",
+  };
+  const row = {};
+  for (const [key, value] of Object.entries(changes)) {
+    if (!columns[key]) throw new Error(`Can't change ${key}`);
+    row[columns[key]] = value;
+  }
+  if ("tryNext" in changes || "howItWent" in changes) row.notes_updated_at = new Date().toISOString();
+  const { error } = await supabase.from("sessions").update(row).eq("id", sessionId);
+  if (error) throw error;
+}
+
+// The answers both kinds of check-in share, as the database names them.
+// Missing values are sent as null or "", so checking in again replaces the
+// earlier answers instead of keeping some of them.
+function answerRow(answers) {
+  return {
+    q4: answers.q4 ?? null,
+    q5: answers.q5 ?? null,
+    identification: answers.identification ?? null,
+    felt_included: answers.feltIncluded ?? null,
+    new_partner: answers.newPartner ?? null,
+    easier_next_time: answers.easierNextTime?.length ? answers.easierNextTime : null,
+    stayed_whole: answers.stayedWhole ?? "",
+    first_time: answers.firstTime ?? "",
+  };
+}
+
+// Saves one kid's check-in in a single database call (save_check_in in
+// supabase/migrations/), so it's all saved or, if anything fails, none of it
+// is and the kid can try again. The statuses say how each "who" question was
+// answered: "named", "none" (tapped Nobody), "skipped", or null if it wasn't
+// asked this time.
 export async function saveCheckIn(sessionId, {
-  personId, workedWith = [], talkedTo = [], knewBefore = [], q4, q5, stayedWhole, firstTime,
+  personId, workedWith = [], talkedTo = [], knewBefore = [],
+  workedWithStatus = null, talkedToStatus = null, knewBeforeStatus = null,
+  learningAnswer = null, ...answers
 }) {
   const tapped = [...new Set([...workedWith, ...talkedTo, ...knewBefore])];
-  const ticks = tapped.map((id) => ({
-    session_id: sessionId,
-    from_person: personId,
-    to_person: id,
-    worked_with: workedWith.includes(id),
-    talked_to: talkedTo.includes(id),
-    knew_before: knewBefore.includes(id),
-  }));
+  const { error } = await supabase.rpc("save_check_in", {
+    p_session_id: sessionId,
+    p_person_id: personId,
+    p_answer: {
+      ...answerRow(answers),
+      worked_with_status: workedWithStatus,
+      talked_to_status: talkedToStatus,
+      knew_before_status: knewBeforeStatus,
+    },
+    p_ticks: tapped.map((id) => ({
+      to_person: id,
+      worked_with: workedWith.includes(id),
+      talked_to: talkedTo.includes(id),
+      knew_before: knewBefore.includes(id),
+    })),
+    p_learning_answer: learningAnswer,
+  });
+  if (error) throw error;
+}
 
-  const { data: rows, error: readError } = await supabase
-    .from("ticks")
-    .select("to_person")
-    .eq("session_id", sessionId)
-    .eq("from_person", personId);
-  if (readError) throw readError;
-  const toRemove = rows.map((row) => row.to_person).filter((id) => !tapped.includes(id));
-
-  // Upsert so a second check-in updates the old ticks instead of adding
-  // copies. Save before removing, for the same reason as in setPresent.
-  if (ticks.length > 0) {
-    const { error } = await supabase
-      .from("ticks")
-      .upsert(ticks, { onConflict: "session_id,from_person,to_person" });
-    if (error) throw error;
-  }
-  if (toRemove.length > 0) {
-    const { error } = await supabase
-      .from("ticks")
-      .delete()
-      .eq("session_id", sessionId)
-      .eq("from_person", personId)
-      .in("to_person", toRemove);
-    if (error) throw error;
-  }
-
-  // Saved last, so an answer row means the whole check-in made it.
-  // Missing values must be sent as null or "", because an upsert leaves out
-  // undefined fields and would keep the old check-in's value.
-  // created_at isn't sent, so it keeps the time of the first check-in.
-  const { error } = await supabase
-    .from("answers")
-    .upsert(
-      {
-        session_id: sessionId,
-        person_id: personId,
-        q4: q4 ?? null,
-        q5: q5 ?? null,
-        stayed_whole: stayedWhole ?? "",
-        first_time: firstTime ?? "",
-      },
-      { onConflict: "session_id,person_id" },
-    );
+// The same for a group that checks in without names. responseId comes from
+// crypto.randomUUID() on the check-in screen, so trying again after a
+// dropped connection updates the same check-in instead of adding another.
+export async function saveAnonymousCheckIn(sessionId, responseId, { learningAnswer = null, ...answers }) {
+  const { error } = await supabase.rpc("save_anonymous_check_in", {
+    p_session_id: sessionId,
+    p_response_id: responseId,
+    p_answer: answerRow(answers),
+    p_learning_answer: learningAnswer,
+  });
   if (error) throw error;
 }
 
@@ -192,6 +237,20 @@ export async function loadGroup(groupId) {
   const attendance = await rowsForSessions("attendance", sessionIds);
   const answers = await rowsForSessions("answers", sessionIds);
   const ticks = await rowsForSessions("ticks", sessionIds);
+  const anonymousAnswers = await rowsForSessions("anonymous_answers", sessionIds);
+  const learningAnswers = await rowsForSessions("learning_answers", sessionIds);
+  const shared = (row) => ({
+    q4: row.q4,
+    q5: row.q5,
+    identification: row.identification,
+    feltIncluded: row.felt_included,
+    newPartner: row.new_partner,
+    easierNextTime: row.easier_next_time,
+    stayedWhole: row.stayed_whole,
+    firstTime: row.first_time,
+    // Older check-ins only have the time they were first saved.
+    answeredAt: row.answered_at ?? row.created_at,
+  });
 
   // The calculations use the names from "The group object" in the build
   // steps, so they never need to know the database's column names.
@@ -200,6 +259,9 @@ export async function loadGroup(groupId) {
     name: group.name,
     ageRange: group.age_range,
     programType: group.program_type,
+    groupType: group.group_type,
+    checkInMode: group.check_in_mode,
+    reportPrivacy: group.report_privacy,
     people: people.map((person) => ({ id: person.id, name: person.name })),
     sessions: sessions.map((session) => ({
       id: session.id,
@@ -207,6 +269,14 @@ export async function loadGroup(groupId) {
       date: session.date,
       activityType: session.activity_type,
       activityNote: session.activity_note,
+      activityGoal: session.activity_goal,
+      learningQuestion: session.learning_question,
+      questions: session.questions,
+      checkInTiming: session.check_in_timing,
+      attendedCount: session.attended_count,
+      tryNext: session.try_next,
+      howItWent: session.how_it_went,
+      notesUpdatedAt: session.notes_updated_at,
       present: attendance
         .filter((row) => row.session_id === session.id)
         .map((row) => row.person_id),
@@ -214,10 +284,21 @@ export async function loadGroup(groupId) {
         .filter((row) => row.session_id === session.id)
         .map((row) => ({
           personId: row.person_id,
-          q4: row.q4,
-          q5: row.q5,
-          stayedWhole: row.stayed_whole,
-          firstTime: row.first_time,
+          ...shared(row),
+          workedWithStatus: row.worked_with_status,
+          talkedToStatus: row.talked_to_status,
+          knewBeforeStatus: row.knew_before_status,
+        })),
+      anonymousAnswers: anonymousAnswers
+        .filter((row) => row.session_id === session.id)
+        .map((row) => ({ id: row.id, ...shared(row) })),
+      learningAnswers: learningAnswers
+        .filter((row) => row.session_id === session.id)
+        .map((row) => ({
+          personId: row.person_id,
+          question: row.question,
+          answer: row.answer,
+          answeredAt: row.answered_at,
         })),
       ticks: ticks
         .filter((row) => row.session_id === session.id)

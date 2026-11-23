@@ -2,17 +2,20 @@
 // The rules are in Step 15 of docs/frontend-steps.md.
 import { buildNetwork } from "../core/network.js";
 import { circlePositions } from "../core/positions.js";
+import { showsIndividuals } from "../core/settings.js";
 import { el, svgEl } from "./app.js";
 
 const STATUS_TEXT = {
   connected: "Connected with someone",
-  isolate: "No connections",
-  unknown: "Didn't check in",
+  isolate: "No reported connections (answered, named nobody)",
+  unknown: "Not known (skipped, or didn't check in)",
 };
 
-export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
+// Names only show for groups with leader support. Group-only pictures have
+// dots and lines, with nothing that says who is who.
+export function drawPicture(group, sessionNumber, { highlight = [], names = showsIndividuals(group) } = {}) {
   const network = buildNetwork(group, sessionNumber);
-  const positions = circlePositions(group);
+  const positions = circlePositions(group, { byName: names });
   const spot = (id) => ({ x: positions[id].x * 100, y: positions[id].y * 100 });
   const nameOf = (id) => group.people.find((person) => person.id === id).name;
   // How much of the circle each kid gets. In a big group there's less, so the
@@ -40,7 +43,7 @@ export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
     const kind = inNewLink.has(id) ? `${network.status[id]} new` : network.status[id];
     return svgEl("circle", { class: `dot ${kind}`, cx: x, cy: y, r: radius(id) });
   });
-  const names = network.people.map((id) => nameLabel(spot(id), radius(id), nameOf(id), spokes));
+  const labels = names ? network.people.map((id) => nameLabel(spot(id), radius(id), nameOf(id), spokes)) : [];
 
   return svgEl("svg", {
     class: "picture",
@@ -48,7 +51,7 @@ export function drawPicture(group, sessionNumber, { highlight = [] } = {}) {
     viewBox: spokes ? "-15 -15 130 130" : "0 0 100 100",
     role: "img",
     "aria-label": `${network.people.length} kids, ${network.links.length} connections`,
-  }, lines, dots, names);
+  }, lines, dots, labels);
 }
 
 // The key goes under the picture rather than inside it, where it would bump
