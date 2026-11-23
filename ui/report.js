@@ -156,10 +156,14 @@ function result(q) {
       { label: "Skipped", count: q.skipped },
     ]);
   }
-  if (q.answers) {
-    return q.answers.length === 0
-      ? el("p", { className: "muted" }, "No answers yet.")
-      : el("ul", { className: "list learning-answers" }, q.answers.map((answer) => el("li", {}, answer)));
+  if (q.byWording) {
+    if (q.byWording.length === 0) return el("p", { className: "muted" }, "No answers yet.");
+    // Answers given to a different wording (or to a question that was
+    // cleared) say what they were asked.
+    return el("div", {}, q.byWording.map(({ wording, answers }) => [
+      wording && wording !== q.wording ? el("p", {}, el("strong", {}, "Asked as: "), wording) : null,
+      el("ul", { className: "list learning-answers" }, answers.map((answer) => el("li", {}, answer))),
+    ]));
   }
   return el("div", {},
     q.average !== undefined

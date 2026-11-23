@@ -125,7 +125,8 @@ export async function setPresent(sessionId, personIds) {
 }
 
 // Only the fields given are changed: activityGoal, learningQuestion,
-// attendedCount (for groups without names), tryNext and howItWent.
+// attendedCount (for groups without names), tryNext and howItWent. The
+// database refuses a new learningQuestion once anyone has checked in.
 export async function updateSession(sessionId, changes) {
   const columns = {
     activityGoal: "activity_goal",

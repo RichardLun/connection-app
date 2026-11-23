@@ -76,13 +76,33 @@ test("the report keeps kinds apart and counts answered and skipped", () => {
   assertClose(q.iis_circles.average, 4.25);
   assert.deepEqual([q.identification.answered, q.identification.skipped], [2, 3]);
   assert.deepEqual([q.learning.answered, q.learning.skipped], [2, 3]);
-  assert.deepEqual(q.learning.answers, ["Explain the activity", "Invite them to join without pressure"]);
+  assert.deepEqual(q.learning.byWording.map((w) => w.answers), [["Explain the activity", "Invite them to join without pressure"]]);
   const easier = Object.fromEntries(q.easier_next_time.counts.map((c) => [c.value, c.count]));
   assert.deepEqual(easier, { smaller_groups: 0, clearer_instructions: 1, more_time: 2, another_way: 0, nothing: 1 });
   assert.deepEqual([q.easier_next_time.answered, q.easier_next_time.skipped], [3, 2]);
   assert.equal(report.network.numbers.links, 2);
   // Nothing adds kinds together into one score.
   assert.ok(!JSON.stringify(report).toLowerCase().includes("score"));
+});
+
+test("learning answers stay under the wording they were given, even after the question is cleared", () => {
+  const group = knownAnswerGroup();
+  const session = group.sessions[0];
+  const wording = session.learningQuestion;
+  // k1 answered an earlier wording; k4 the current one.
+  session.learningAnswers[0].question = "Old wording";
+  session.learningAnswers[1].question = wording;
+  const learning = () => sessionReport(group, 1).sections.flatMap((s) => s.questions).find((q) => q.id === "learning");
+  assert.deepEqual(learning().byWording, [
+    { wording, answers: ["Explain the activity"] },
+    { wording: "Old wording", answers: ["Invite them to join without pressure"] },
+  ]);
+
+  session.learningQuestion = null;
+  const cleared = learning();
+  assert.equal(cleared.wording, null);
+  assert.equal(cleared.answered, 2);
+  assert.deepEqual(cleared.byWording.map((w) => w.wording), [wording, "Old wording"]);
 });
 
 test("a survey without names reports only what was collected", () => {

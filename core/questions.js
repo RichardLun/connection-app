@@ -225,18 +225,19 @@ export const RATING_IDS = QUESTION_ORDER.filter((id) => typeof QUESTIONS[id].min
 const NETWORK_IDS = ["worked_with", "talked_to"];
 
 // The ids a session asked, in check-in order. The learning question is
-// included when the session has one.
-export function sessionQuestionIds(session) {
+// included when the session has one, or when learning is true (the report
+// uses that to keep showing answers saved before a question was cleared).
+export function sessionQuestionIds(session, { learning = Boolean(session.learningQuestion) } = {}) {
   const ids = new Set(session.questions ?? ORIGINAL_QUESTION_IDS);
-  if (session.learningQuestion) ids.add("learning");
+  if (learning) ids.add("learning");
   else ids.delete("learning");
   return QUESTION_ORDER.filter((id) => ids.has(id));
 }
 
 // The questions a session asked, with the learning question's own wording.
-export function sessionQuestions(session) {
-  return sessionQuestionIds(session).map((id) =>
-    id === "learning" ? { ...QUESTIONS.learning, wording: session.learningQuestion } : QUESTIONS[id]);
+export function sessionQuestions(session, options) {
+  return sessionQuestionIds(session, options).map((id) =>
+    id === "learning" ? { ...QUESTIONS.learning, wording: session.learningQuestion ?? null } : QUESTIONS[id]);
 }
 
 export function asks(session, id) {

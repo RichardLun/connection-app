@@ -29,7 +29,9 @@ The start form asks for:
   "A new student hasn't joined your group's activity yet. What could you do
   to help them take part?" Answers are kept in their own table and shown in
   their own section, never mixed with belonging or interaction. It can be
-  changed on the session screen until the first kid checks in.
+  changed on the session screen until the first kid checks in; after that
+  the database refuses the change. If it's cleared while a kid has the
+  check-in open, their check-in still saves, without the learning answer.
 - **When kids check in**: right after the activity, at the end of the
   session, or later.
 - **Questions**: tick which to ask. Every question shows its kind and whether
@@ -95,7 +97,9 @@ the results screen). It reports only what was actually collected:
   many picked each option. The interaction section has the network numbers
   and a picture without names, when the who-questions were asked. Otherwise
   it says: "Belonging answers alone can't show who is connected to whom."
-- Learning answers are listed without names, in alphabetical order.
+- Learning answers are listed without names, in alphabetical order, under
+  the wording each kid was given (saved with the answer). Saved answers still
+  show if the question was cleared afterwards.
 - **Staff notes**: "What will we try next?" and, later, "How did it go?",
   saved with the session. For example, if kids want clearer instructions,
   staff might demonstrate the activity first next time, then ask for

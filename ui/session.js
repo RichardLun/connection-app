@@ -58,7 +58,7 @@ async function load() {
   session = group.sessions.find((s) => s.number === sessionNumber);
 }
 
-function draw(saved = false) {
+function draw(saved = false, planNotice = "") {
   const details = [session.date, labelFor(ACTIVITY_TYPES, session.activityType)].filter(Boolean).join(" · ");
   showCheckIns();
   fill(main,
@@ -66,7 +66,7 @@ function draw(saved = false) {
     el("h1", {}, title()),
     details ? el("p", { className: "muted" }, details) : null,
     session.activityNote ? el("p", {}, session.activityNote) : null,
-    planCard(),
+    planCard(planNotice),
     usesNames(group) ? whosHere(saved) : headcount(saved),
     checkInLinks(),
     checkIns,
@@ -85,9 +85,9 @@ function title() {
 
 // What this check-in asks, and when. The goal can change any time; the
 // learning question only until the first kid checks in, so everyone who
-// answers it was asked the same thing.
-function planCard() {
-  const started = session.answers.length > 0 || (session.anonymousAnswers ?? []).length > 0;
+// answers it was asked the same thing. The database refuses a change too.
+function planCard(notice) {
+  const started = hasCheckIns(session);
   const goal = el("textarea", { id: "goal", rows: 2, maxLength: 500, value: session.activityGoal ?? "" });
   const learning = el("textarea", {
     id: "learning", rows: 2, maxLength: 500, value: session.learningQuestion ?? "", disabled: started,
@@ -99,9 +99,16 @@ function planCard() {
     event.preventDefault();
     save.disabled = true;
     status.textContent = "Saving...";
+    let locked = false;
     try {
+      // A kid may have checked in since this card was drawn.
+      await load();
       const changes = { activityGoal: goal.value.trim() || null };
-      if (!started) changes.learningQuestion = learning.value.trim() || null;
+      const question = learning.value.trim() || null;
+      if (question !== (session.learningQuestion ?? null)) {
+        locked = hasCheckIns(session);
+        if (!locked) changes.learningQuestion = question;
+      }
       await updateSession(session.id, changes);
       await load();
     } catch (error) {
@@ -110,7 +117,7 @@ function planCard() {
       save.disabled = false;
       return;
     }
-    draw();
+    draw(false, locked ? "The goal was saved, but a kid checked in first, so the learning question didn't change." : "");
   }
 
   return el("form", { className: "card", onsubmit: onSubmit },
@@ -128,8 +135,13 @@ function planCard() {
         ? "Kids have started checking in, so the learning question can't change now."
         : "Optional. Shown to kids at check-in when filled in."),
     learning,
+    notice ? el("p", { className: "warning" }, notice) : null,
     el("div", { className: "actions" }, save, status),
   );
+}
+
+function hasCheckIns(session) {
+  return session.answers.length > 0 || (session.anonymousAnswers ?? []).length > 0;
 }
 
 // Groups without names can't tick who's here, so the leader types how many

@@ -24,7 +24,9 @@ export function sessionReport(group, sessionNumber) {
   const network = asksInteractions(group) && hasNetwork(session);
   const times = responses.map((answer) => answer.answeredAt).filter(Boolean).sort();
 
-  const questions = sessionQuestions(session).map((question) => questionResult(question, responses, group, session));
+  // Saved learning answers still show if the question was cleared afterwards.
+  const learning = Boolean(session.learningQuestion) || learningAnswers(group, session).length > 0;
+  const questions = sessionQuestions(session, { learning }).map((question) => questionResult(question, responses, group, session));
   const sections = SECTION_ORDER
     .map((kind) => ({ kind, label: KINDS[kind].label, asks: KINDS[kind].asks, questions: questions.filter((q) => q.kind === kind) }))
     .filter((section) => section.questions.length > 0 || (section.kind === "interaction" && network));
@@ -100,14 +102,22 @@ function questionResult(question, responses, group, session) {
   }
 
   if (question.type === "text") {
-    const answers = learningAnswers(group, session).map((row) => row.answer);
+    const rows = learningAnswers(group, session);
+    // Each answer was saved with the wording the kid was given, so it's shown
+    // under that wording even if the question changed afterwards.
+    const wordingOf = (row) => row.question ?? question.wording;
+    const wordings = [...new Set(rows.map(wordingOf))].sort((a, b) =>
+      (b === question.wording) - (a === question.wording) || String(a).localeCompare(String(b)));
     return {
       ...base,
       asked: responses.length,
-      answered: answers.length,
-      skipped: responses.length - answers.length,
-      // Sorted, so the order doesn't give away who checked in when.
-      answers: [...answers].sort((a, b) => a.localeCompare(b)),
+      answered: rows.length,
+      skipped: responses.length - rows.length,
+      byWording: wordings.map((wording) => ({
+        wording,
+        // Sorted, so the order doesn't give away who checked in when.
+        answers: rows.filter((row) => wordingOf(row) === wording).map((row) => row.answer).sort((a, b) => a.localeCompare(b)),
+      })),
     };
   }
 
