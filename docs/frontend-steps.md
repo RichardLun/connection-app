@@ -359,6 +359,7 @@ How to draw it:
 - The picture is an `<svg>` with `viewBox="0 0 100 100"`, which means positions go from 0 to 100 however big it is on the screen.
 - Each kid's spot comes from `circlePositions(group)`, which you wrote in step 10. It gives x and y between 0 and 1, so multiply them by 100.
 - Only kids who were there get a dot, but everyone keeps their usual spot. That way each kid is in the same place in every session's picture.
+- When names are hidden (group-only groups, and the report), `circlePositions(group, { byName: false, session })` places only the kids who were there, in an order that changes every session. Fixed spots would leave a gap where an absent kid sits, so a leader who knew who was away could find that kid's dot on other days.
 - Draw a line for each link from `buildNetwork(group, number)`. Draw the lines first, so the dots sit on top of them.
 - Color each dot by its status (connected, isolate or unknown), and add a small key that says what each color means.
 - Write each kid's name next to their dot.

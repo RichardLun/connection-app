@@ -12,15 +12,17 @@ const STATUS_TEXT = {
 };
 
 // Names only show for groups with leader support. Group-only pictures have
-// dots and lines, with nothing that says who is who.
+// dots and lines, with nothing that says who is who: only the kids who were
+// there get a spot, in an order that changes every session.
 export function drawPicture(group, sessionNumber, { highlight = [], names = showsIndividuals(group) } = {}) {
   const network = buildNetwork(group, sessionNumber);
-  const positions = circlePositions(group, { byName: names });
+  const session = group.sessions.find((s) => s.number === sessionNumber);
+  const positions = circlePositions(group, { byName: names, session });
   const spot = (id) => ({ x: positions[id].x * 100, y: positions[id].y * 100 });
   const nameOf = (id) => group.people.find((person) => person.id === id).name;
   // How much of the circle each kid gets. In a big group there's less, so the
   // dots shrink and the names turn into spokes to keep clear of each other.
-  const room = 2 * Math.PI * 40 / group.people.length;
+  const room = 2 * Math.PI * 40 / Object.keys(positions).length;
   const spokes = room < 11;
   // Capped at a third of the room, so neighbouring dots never touch.
   const radius = (id) => Math.min(dotSize(network.degree[id]), room / 3);

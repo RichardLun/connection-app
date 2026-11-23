@@ -60,7 +60,7 @@ now makes it an explicit setting:
 
 | | Group-only (default for new groups) | Leader support |
 |---|---|---|
-| Results picture | Dots and lines, no names, arranged so the order says nothing about who is who | Names on the dots |
+| Results picture | Dots and lines, no names: only the kids who were there, in an order that changes every session, so a dot can't be traced to a kid | Names on the dots |
 | "Who to check on" list | Never shown | On the leader's results screen only |
 | Group report, CSV export | No names, no ids, no flags | No names, no ids, no flags |
 | AI overview | Group-level numbers only, and told not to suggest singling out kids | Group-level numbers only |
