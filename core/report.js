@@ -89,8 +89,11 @@ function questionResult(question, responses, group, session) {
       else if (status === "none") none += 1;
       else if (status === "skipped") skipped += 1;
       // A newer check-in that left this blank didn't ask it (knew before is
-      // only asked once). An older one didn't record the difference.
+      // only asked once).
       else if (hasStatuses(answer)) notAsked += 1;
+      // Older check-ins didn't record statuses, but their ticks still show who
+      // named someone. For the rest, "nobody" and a skip look the same.
+      else if (namedInTicks(session, answer.personId, question.field)) named += 1;
       else notRecorded += 1;
     }
     return { ...base, asked: named + none + skipped + notRecorded, answered: named + none, skipped, notRecorded, notAsked, named, none };
@@ -124,6 +127,10 @@ function questionResult(question, responses, group, session) {
 function isAnswer(value) {
   if (Array.isArray(value)) return value.length > 0;
   return value !== null && value !== undefined && value !== "";
+}
+
+function namedInTicks(session, personId, field) {
+  return session.ticks.some((tick) => tick.from === personId && tick[field]);
 }
 
 function hasStatuses(answer) {

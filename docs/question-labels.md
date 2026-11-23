@@ -68,6 +68,7 @@ Sessions from before November 2026 have no stored question list. They count as
 having asked the original Connected check-in: worked with, talked to, knew
 before, the circles (Q4), the 1-to-5 belonging question (Q5), stayed for the
 whole session and first time. Their check-ins didn't record whether a kid
-tapped nobody or skipped a "who" question, so the report says "not recorded"
-for those, and the network uses the old paper rule (answering a rating counts
-as handing in the sheet).
+tapped nobody or skipped a "who" question. The report counts a kid who ticked
+someone as having named someone, says "not recorded" for the rest, and the
+network uses the old paper rule (answering a rating counts as handing in the
+sheet).

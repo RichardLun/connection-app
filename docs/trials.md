@@ -86,7 +86,8 @@ the results screen). It reports only what was actually collected:
 - How many attended, how many checked in, and how many didn't.
 - For every question: how many answered and how many skipped. For the "who"
   questions: how many named someone, said nobody, or skipped. Older
-  check-ins show "not recorded" because they didn't tell nobody and skip apart.
+  check-ins count kids who ticked someone as naming someone; the rest show
+  "not recorded" because those check-ins didn't tell nobody and skip apart.
 - One section per kind: belonging, interaction, learning, activity feedback,
   and context. Ratings show their average (skips left out), scale and how
   many picked each option. The interaction section has the network numbers

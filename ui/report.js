@@ -137,7 +137,7 @@ function questionBlock(q) {
     q.purposeUnclear ? "purpose unclear (not interaction, belonging or learning)" : null,
   ].filter(Boolean).join(" · ");
   const counts = [`${q.answered} answered`, `${q.skipped} skipped`];
-  if (q.notRecorded) counts.push(`${q.notRecorded} older check-ins didn't record whether they answered`);
+  if (q.notRecorded) counts.push(`${q.notRecorded} older check-ins named nobody, and didn't record whether that was "Nobody" or a skip`);
   if (q.notAsked) counts.push(`${q.notAsked} not asked (only asked at a kid's first check-in)`);
 
   return el("div", { className: "question-result" },
