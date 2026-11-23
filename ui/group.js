@@ -58,7 +58,6 @@ async function start() {
 function settingsCard() {
   const privacy = group.reportPrivacy;
   const other = privacy === "leader_support" ? "group_only" : "leader_support";
-  const message = el("span", { className: "muted" });
   async function switchPrivacy() {
     if (other === "group_only" && !confirm("Switch to group-only reports? You can't switch back once kids have checked in.")) return;
     try {
@@ -78,8 +77,7 @@ function settingsCard() {
     canSwitchPrivacy(group, other)
       ? el("div", { className: "actions" },
         el("button", { type: "button", className: "secondary", onclick: switchPrivacy },
-          other === "group_only" ? "Switch to group-only reports" : "Add leader support"),
-        message)
+          other === "group_only" ? "Switch to group-only reports" : "Add leader support"))
       : null,
   );
 }
