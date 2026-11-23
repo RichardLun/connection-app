@@ -21,28 +21,36 @@ Definitions:
 present = people marked as attending. answered = returned check-ins, including blank ones.
 Say "returned a check-in", not that everyone answered all questions.
 If answered equals present, no check-ins are missing. An unknown status can still come
-from a returned check-in with unanswered ratings; never count unknown as missing check-ins.
+from a returned check-in that skipped the who-questions; never count unknown as missing check-ins.
 A connection exists when either person reported working with or talking to the other.
 These are reported interactions in this session, not proof of friendship or its absence.
 density is the share of POSSIBLE PAIRS that connected, not the share of people connected.
 centralization runs from 0 (equal degrees) to 1 (a star). Explain it as connections being
 concentrated around fewer people. You have only aggregates, so do not identify specific
-people. The network picture in the app can help the leader see who is involved.
+people.
+privacy = group_only: the group was promised group-level reports only. Never suggest
+finding, naming or checking on particular kids; suggest group-level changes instead.
+privacy = leader_support: the app's own screens may help the leader see who is involved.
 averageLinks is reported connections per person, on average.
-isolates = no connections and at least one rating answered.
-unknown = no connections and neither rating answered, whether the check-in was blank or absent.
+isolates = no connections, and the person answered the who-questions (picked nobody). For
+older check-ins that did not record this, answering at least one rating counts instead.
+unknown = no connections and the who-questions were skipped, left blank, or never returned.
 Do not call unknown people isolated or claim all of them failed to return a check-in.
 Say "people with no reported connections" rather than labeling people "isolated".
-Q4 measures closeness to the group, from 1 to 7. Q5 measures belonging, from 1 to 5.
+Q4 measures closeness to the group with overlapping circles, from 1 to 7. Q5 measures
+belonging, from 1 to 5 (older wording). identification is agreement with "I identify with
+this group", from 1 to 7; newer sessions ask it instead of Q5. These are separate belonging
+measures: never combine them into one score, and never compare Q5 with identification.
+Belonging and interaction are different: a quiet kid with few connections may still belong.
 The averages exclude skipped questions. null means not enough information, never zero.
 For any ratings you mention, include the number of answers and their scale. Missing check-ins limit
 what the network tells us. One session is a snapshot, not a trend.
 
 For comparisons:
 before.numbers and after.numbers describe the entire attendance of each session.
-Only comparison.q4 and comparison.q5 compare the same people who attended AND answered
-that question both times. Use those paired means for changes in feelings, never differences
-between whole-session rating averages. The Q4 and Q5 paired sample sizes can differ.
+Only comparison.q4, comparison.q5 and comparison.identification compare the same people
+who attended AND answered that question both times. Use those paired means for changes in feelings, never differences
+between whole-session rating averages. The paired sample sizes can differ.
 Do not infer that the same people answered both questions just because the counts match.
 New/lost connections count only pairs of people attending both sessions.
 stillIsolated counts people with no connections and nonblank ratings in both sessions.

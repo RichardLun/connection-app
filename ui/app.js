@@ -1,5 +1,6 @@
 // Small helpers that every screen uses. The table in "The helpers in
 // ui/app.js" in docs/frontend-steps.md shows how to use each one.
+import { KINDS } from "../core/questions.js";
 
 // Reads a value from the page's address. On group.html?group=abc,
 // getParam("group") gives "abc".
@@ -106,4 +107,41 @@ export const ACTIVITY_TYPES = [
 // gives "Free time". Gives "" for an empty or unknown value.
 export function labelFor(list, value) {
   return list.find((item) => item.value === value)?.label ?? "";
+}
+
+// A small tag saying what kind of question a result comes from, like
+// "Belonging". Every result on screen gets one, so kinds are never mixed up.
+export function kindTag(kind) {
+  return el("span", { className: `kind kind-${kind}`, title: KINDS[kind].asks }, KINDS[kind].label);
+}
+
+// "4:05 pm" in the leader's own time zone, from a saved time.
+export function formatTime(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+// When the check-ins were answered, like "Answered 4:01 pm to 4:20 pm".
+export function answeredWhen(from, to) {
+  if (!from) return "No check-ins yet";
+  const day = (iso) => new Date(iso).toLocaleDateString([], { day: "numeric", month: "short" });
+  const start = `${day(from)}, ${formatTime(from)}`;
+  if (from === to) return `Answered ${start}`;
+  const end = day(from) === day(to) ? formatTime(to) : `${day(to)}, ${formatTime(to)}`;
+  return `Answered ${start} to ${end}`;
+}
+
+// Saves text as a file, for the CSV and Gephi downloads.
+export function downloadFile(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const link = el("a", { href: url, download: name });
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// A file name made from the group name, like "fake-site-session-2".
+export function fileName(...parts) {
+  return parts.join(" ").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "connected";
 }

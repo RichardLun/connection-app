@@ -7,6 +7,10 @@ export function tinyGroup() {
     name: "Tiny example",
     ageRange: "11-13",
     programType: "after_school",
+    // Like every group made before group-only reports were the default.
+    groupType: "regular",
+    checkInMode: "names_and_interactions",
+    reportPrivacy: "leader_support",
     people: [
       { id: "p1", name: "Ana" },
       { id: "p2", name: "Ben" },
