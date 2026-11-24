@@ -91,19 +91,101 @@ reported connections, unknown) as a node attribute; group-only groups don't.
 `tools/public-data/` writes the same kind of file for each SocioPatterns
 relationship (`output/sociopatterns-*.gexf`).
 
-To compare with Gephi (desktop app, free):
+### Checked in Gephi Lite (24 November 2026)
 
-1. **File > Open** the `.gexf` file and keep it as an undirected graph.
-2. In **Statistics**, run **Average Degree** and **Graph Density**. The
-   number of nodes and edges (top right) should match the report's "Kids
-   here" and "Connections", average degree should match "Connections per
-   kid, on average", and density should match "Share of possible pairs who
-   connected".
-3. For the picture, use **Layout > Circular Layout** to match Connected's
-   circle, or **ForceAtlas 2** to see clusters. Colour nodes by the `status`
-   attribute (Appearance > Nodes > Partition) when it's there.
+We used the made-up test group "Fake site (test data)" on the live site,
+session 1, without changing it. We downloaded all four GEXF files from its
+report and opened each one in [Gephi Lite](https://lite.gephi.org) 1.1.2, the
+free version of Gephi that runs in a web browser. There we worked out each
+kid's degree (number of connections), sized the dots by degree, coloured them
+by status and used the **Circular** layout, so the picture looks like
+Connected's. We then read the same files with NetworkX (`nx.read_gexf`) and
+compared all three with Connected's results screen.
 
-Gephi wasn't available where these checks were run, so the GEXF files were
-read back with NetworkX's GEXF reader instead: node and edge counts and
-density matched for all four SocioPatterns files. Opening one in Gephi is a
-good five-minute check for Subin.
+| Session 1, worked with or talked to | Connected | Gephi Lite | NetworkX |
+|---|---|---|---|
+| Kids (nodes) | 20 | 20 | 20 |
+| Connections (edges) | 19 | 19 | 19 |
+| Kids with no connections (degree 0) | 3: 2 no reported connections + 1 not known | 3 | 3 isolates |
+| Most connections for one kid | 11 (S01, the biggest dot) | 11 (Kid 4) | 11 |
+| Connections per kid, on average | 1.9 | 1.9 (its degree column adds up to 38, over 20 kids) | 1.9 |
+
+The files for the other kinds of connection also matched in all three:
+
+| Session 1 file | Kids | Connections | Degree 0 (no reported connections + not known) | Most connections |
+|---|---|---|---|---|
+| Worked with (`...-worked.gexf`) | 20 | 18 | 3 (2 + 1) | 10 |
+| Talked to (`...-talked.gexf`) | 20 | 18 | 5 (4 + 1) | 11 |
+| Knew before joining (`...-knew.gexf`) | 20 | 0 | 20 (0 + 20) | 0 |
+
+![Connected's picture of session 1, with names](images/gephi-check-connected.png)
+
+![The same session's "worked with or talked to" file in Gephi Lite: circular layout, sized by degree, coloured by status](images/gephi-check-gephi-lite.png)
+
+**What matched.** Beyond the counts, we compared the networks pair by pair.
+Every line in Connected's picture joins the same two kids as an edge in the
+file, in Gephi Lite's edge table and in NetworkX, and every kid has the same
+number of connections and the same status everywhere. The kids with no
+connections are dots on their own in both pictures (S15 and S16, no reported
+connections, and S14, not known, are Kid 11, Kid 18 and Kid 20 in the file),
+and bigger dots mean more connections in both. The kinds stay apart: each
+file holds one kind, every edge says which (`relation` is `either`, `worked`,
+`talked` or `knew`), and the full wording, such as "Worked with or talked to
+(either kid said so)", is in the file's description, which Gephi Lite shows
+under the pencil next to the file name. The worked-with and talked-to files
+together give exactly the combined file (17 pairs said both, 1 only worked
+together and 1 only talked). All four files are valid GEXF 1.3, checked
+against the official schema. Session 2 (16 kids, 22 connections) matched in
+the same way, and the four SocioPatterns files gave the same counts in Gephi
+Lite as in the NetworkX table above (329 nodes; 406, 348, 1,437 and 5,818
+edges).
+
+**What differed, and why it isn't an error.**
+
+- **Labels.** Connected's picture shows names, because this group has leader
+  support. The file never includes names, so Gephi shows "Kid 1", "Kid 2",
+  ..., numbered in the order of the kids' hidden database ids: here S01 is
+  Kid 4. The numbers match across one session's files, but the same kid can
+  have a different number in another session.
+- **Positions.** Connected goes clockwise from the top in name order. Gephi
+  Lite's circle starts on the right and goes anticlockwise in file order. The
+  shapes look different, but the pairs are the same.
+- **Colours and sizes.** Gephi Lite picks its own colour for each status (and
+  may pick different ones next time); Connected uses blue, orange and a grey
+  ring. Both make dots bigger for more connections, on different scales.
+- **"Mixed graph" for an empty file.** Gephi Lite guesses the kind of graph
+  from the first edge, so a file with no edges shows as "Mixed graph" and its
+  edge table has no `relation` column. The file says undirected, and NetworkX
+  reads it that way. Here the knew-before file is empty because none of these
+  made-up October check-ins has a knew-before answer, so every kid is "not
+  known" rather than "knew nobody".
+- **Numbers Gephi Lite doesn't have.** It has no density or centralization.
+  Those are checked with NetworkX in the section above.
+
+No errors were found in the export or the picture, so nothing in Connected
+was changed.
+
+### How to repeat it
+
+1. On the group report, under **Network file for Gephi**, pick the kind of
+   connection and press **Download GEXF**.
+2. Go to [lite.gephi.org](https://lite.gephi.org). It's free, and it opens
+   the file in your browser without uploading it. Choose **Open a local
+   file**, pick the file and press **Open**.
+3. At the top left, **Nodes** and **Edges** should match **Kids here** and
+   **Connections** on the results screen (for the "worked with or talked to"
+   file).
+4. Choose **Metrics > Degree > Compute metric**, then the **Data** tab, and
+   sort by `degree`. The kids with 0 have no connections. For groups with
+   leader support, `status` says which of them answered (`isolate`, shown as
+   "no reported connections" in Connected) and which are `unknown`. The
+   highest degree should match the biggest dot in Connected's picture.
+5. For a picture like Connected's: under **Appearance > Nodes**, set the size
+   from `degree` and the colour from `status`, then choose **Layout >
+   Circular > Apply**.
+
+The Gephi desktop app (also free) works the same way: **File > Open** the
+file and keep it undirected. **Statistics > Average Degree** should match
+"Connections per kid, on average" and **Graph Density** should match "Share
+of possible pairs who connected". Use **Layout > Circular Layout** and colour
+by `status` (**Appearance > Nodes > Partition**).
