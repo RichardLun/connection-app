@@ -2,19 +2,23 @@
 // docs/build-steps.md.
 // This file must not import from lib/ or core/data.js, so Node can test it.
 import { buildNetwork } from "./network.js";
+import { showsIndividuals } from "./settings.js";
 
 // Leaders read these, so they describe what happened without labelling
 // the kid.
 export const REASON_TEXT = {
   "no-links-twice": "No connections this session and last session",
   "no-links": "No connections this session",
-  "no-answer": "Didn't fill in the check-in, and nobody said they connected with them",
+  "no-answer": "Didn't say who they worked with or talked to (skipped or no check-in), and nobody named them",
 };
 
 // Most worrying first, so it's the first thing a leader sees.
 const REASON_ORDER = ["no-links-twice", "no-links", "no-answer"];
 
+// Empty for group-only groups: they promised kids that no screen would
+// single anyone out.
 export function peopleToCheckOn(group, sessionNumber) {
+  if (!showsIndividuals(group)) return [];
   const network = buildNetwork(group, sessionNumber);
   const previous = previousSession(group, sessionNumber);
   // With no earlier session, nobody can have been an isolate "last time".

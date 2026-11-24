@@ -1,5 +1,11 @@
 # Build steps: the backend
 
+> **Changed in November 2026 (Richard).** For future trials the backend gained
+> a question catalog, group settings, a group report and exports, and the
+> isolate rule in Step 5 now depends on how a kid answered the who-questions.
+> This guide still describes how the first version was built. For what changed,
+> read `docs/trials.md` and `docs/question-labels.md`.
+
 ## How this doc works
 
 This doc covers the backend. Each step below becomes one pull request (PR), a request for me to review your changes and add them to the main code. Do the steps in order, since later steps build on earlier ones.
@@ -350,6 +356,12 @@ Each kid also gets a status:
 - **connected:** has at least one link.
 - **isolate:** has no links, but answered Q4 or Q5. They checked in and really didn't connect with anyone.
 - **unknown:** has no links, and didn't answer Q4 or Q5. They skipped the check-in or left it blank, so we can't tell.
+
+  Since November 2026, check-ins record whether a kid tapped names, tapped
+  **Nobody** or skipped each who-question. For those check-ins, a kid with no
+  links is an isolate only if they answered the who-questions (names or
+  Nobody); skipping makes them unknown. The rule above still applies to older
+  check-ins. See `answeredWho()` in `core/network.js`.
 
 Dev in the tiny example skipped everything, but Cara tapped him, so he's connected.
 

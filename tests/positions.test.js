@@ -84,3 +84,27 @@ test("one kid sits at the top, and nobody gives no positions", () => {
   assertClose(positions.p1.x, 0.5);
   assertClose(positions.p1.y, 0.1);
 });
+
+// Which of n evenly spaced spots a dot is in, counting clockwise from the top.
+function spotNumber({ x, y }, n) {
+  const turn = Math.atan2(y - 0.5, x - 0.5) + Math.PI / 2;
+  return Math.round(turn / (2 * Math.PI / n) + n) % n;
+}
+
+test("without names, only the kids who were there get a spot, and nobody leaves a gap", () => {
+  const session = group.sessions.find((s) => s.number === 2);
+  const n = session.present.length;
+  assert.ok(n < group.people.length, "some kids were away");
+  const positions = circlePositions(group, { byName: false, session });
+  assert.deepEqual(Object.keys(positions).sort(), [...session.present].sort());
+  const spots = Object.values(positions).map((position) => spotNumber(position, n)).sort((a, b) => a - b);
+  assert.deepEqual(spots, [...Array(n).keys()]);
+});
+
+test("without names, each session has its own order, but always the same one", () => {
+  const first = { ...group.sessions[0], id: "session-a" };
+  const second = { ...first, id: "session-b" };
+  const hidden = (session) => circlePositions(group, { byName: false, session });
+  assert.deepEqual(hidden(first), hidden(first));
+  assert.notDeepEqual(hidden(first), hidden(second));
+});

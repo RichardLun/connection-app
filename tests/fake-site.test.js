@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { sessionNumbers } from "../core/numbers.js";
 import { buildNetwork } from "../core/network.js";
+import { sessionReport } from "../core/report.js";
 
 const group = JSON.parse(readFileSync(new URL("./fixtures/fake-site.json", import.meta.url), "utf8"));
 function assertClose(actual, expected) {
@@ -55,4 +56,12 @@ test("fake site: statuses in session 2", () => {
   assert.equal(network.status.S14, "unknown");
   assert.equal(network.status.S15, "isolate");
   assert.equal(network.status.S16, "isolate");
+});
+
+test("the report counts kids who named someone at check-ins older than the who-statuses", () => {
+  const questions = sessionReport(group, 1).sections.flatMap((section) => section.questions);
+  const worked = questions.find((q) => q.id === "worked_with");
+  // 11 of the 20 kids ticked someone they worked with. The other 9 named
+  // nobody, and these check-ins can't tell "Nobody" from a skip.
+  assert.deepEqual([worked.named, worked.none, worked.notRecorded, worked.answered, worked.asked], [11, 0, 9, 11, 20]);
 });

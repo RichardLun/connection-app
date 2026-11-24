@@ -1,6 +1,9 @@
 {
   "id": "fake-site",
   "name": "Fake site",
+  "groupType": "regular",
+  "checkInMode": "names_and_interactions",
+  "reportPrivacy": "leader_support",
   "people": [
     {
       "id": "S01",

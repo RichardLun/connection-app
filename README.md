@@ -1,6 +1,6 @@
 # Connected-TBD
 
-A web app that helps youth group leaders see whether the kids in their group are connecting. At the end of a session, each kid checks in on their own phone by scanning a QR code, or on the leader's phone if they don't have one. The leader then sees who connected with whom, and who might need help. Data is saved to a Supabase database.
+A web app that helps youth group leaders see whether the kids in their group are connecting. At the end of a session, each kid checks in on their own phone by scanning a QR code, or on the leader's phone if they don't have one. The leader then sees who connected with whom and how kids felt about the group, kept as separate results, plus a group report they can print or export. Groups can also run a single activity, or check in with survey questions only, with or without names. Data is saved to a Supabase database.
 
 The guides are in `docs/`. Read them in this order:
 
@@ -8,6 +8,14 @@ The guides are in `docs/`. Read them in this order:
 2. [docs/outline.md](docs/outline.md): what we're building, and how we'll work
 3. [docs/build-steps.md](docs/build-steps.md): building the backend, step by step
 4. [docs/frontend-steps.md](docs/frontend-steps.md): building the screens, and testing the whole app
+
+For trials with schools and youth organizations (Irene's next-steps doc, November 2026):
+
+- [docs/trials.md](docs/trials.md): single activities, survey-only check-ins, group-only reports, the group report and exports
+- [docs/question-labels.md](docs/question-labels.md): every question, its kind (interaction, belonging, learning) and flags
+- [docs/survey-comparison.md](docs/survey-comparison.md): the live tool compared with the survey draft
+- [docs/reference-comparison.md](docs/reference-comparison.md): Connected compared with Network Canvas, NetworkX and Gephi
+- [tools/public-data/](tools/public-data/README.md): checking the numbers against NetworkX with public data
 
 ## Running it
 
@@ -22,7 +30,10 @@ Every branch you push gets a preview link from Vercel, which shows up on its pul
 
 Results and Compare have an **Explain these results** button. It asks Claude for
 a short overview, something to watch, and one idea for the next session. The
-calculations remain in `core/`; AI only explains their outputs.
+calculations remain in `core/`; AI only explains their outputs. It only shows
+for sessions that ask who kids worked with or talked to, because its inputs
+include the network numbers. It is told whether the group is group-only, so it
+never suggests singling kids out for a group that promised not to.
 
 To connect it, add `ANTHROPIC_API_KEY` to the connection-app project's Vercel
 environment settings and redeploy. Until then, the button explains that AI is
