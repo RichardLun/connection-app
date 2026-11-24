@@ -15,37 +15,33 @@
   <dialog id="tips" class="tips" aria-labelledby="tips-title">
     <div>
       <h2 id="tips-title">On this page</h2>
-      <p>Two kids count as <strong>connected</strong> if either one said they worked with or talked to the other today. Knowing each other before doesn't count. Only kids ticked as here are included.</p>
-      <h3>The numbers</h3>
+      <p>Each kind of question has its own section, and nothing is added up into one "connection score". Talking to lots of kids isn't the same as feeling you belong: a quiet kid may still feel they belong.</p>
+      <h3>Who worked with or talked to whom</h3>
+      <p>Two kids count as <strong>connected</strong> if either one said they worked with or talked to the other. Knowing each other before doesn't count. Only kids ticked as here are included.</p>
       <ul>
         <li><strong>Kids here:</strong> how many kids were ticked as here.</li>
         <li><strong>Checked in:</strong> how many of them filled in the check-in.</li>
         <li><strong>Connections:</strong> how many pairs of kids connected. If Ana and Ben both pick each other, that's still one connection.</li>
         <li><strong>Share of possible pairs who connected:</strong> from 0 to 1. 1 would mean every kid connected with every other kid. 0.20 means 1 in every 5 possible pairs connected.</li>
-        <li><strong>Kids with no connections:</strong> kids who checked in, but didn't connect with anyone, and nobody said they connected with them.</li>
-        <li><strong>Didn't check in:</strong> kids who didn't check in and weren't picked by anyone, so we don't know how they got on. A kid who didn't check in but was picked by someone counts as connected.</li>
+        <li><strong>Answered, but no reported connections:</strong> kids who answered the "who" questions (named someone or tapped Nobody), but didn't connect with anyone, and nobody picked them.</li>
+        <li><strong>Not known:</strong> kids who skipped the "who" questions or didn't check in, and weren't picked by anyone, so we don't know how they got on. A kid who was picked by someone counts as connected.</li>
         <li><strong>How much the connections center on one kid:</strong> from 0 to 1. Close to 1 means most connections go through one kid. Close to 0 means they're spread out evenly. It needs at least 3 kids.</li>
         <li><strong>Connections per kid, on average:</strong> how many other kids each kid connected with, on average.</li>
-        <li><strong>How close kids feel to the group:</strong> the average of the circle pictures, from 1 to 7. Higher means closer.</li>
-        <li><strong>How much kids feel they belong:</strong> the average answer, from 1 to 5. Higher means they feel they belong more.</li>
-        <li>"answered" under a feeling number shows how many kids answered that question. Skipped answers are left out, so they don't pull the average down.</li>
-        <li><strong>n/a</strong> means there isn't enough data to work that number out yet.</li>
       </ul>
       <h3>The picture</h3>
       <ul>
-        <li>Each dot is a kid who was here, and each line joins two kids who connected.</li>
-        <li><strong>Blue dot:</strong> connected with someone.</li>
-        <li><strong>Orange dot:</strong> no connections.</li>
-        <li><strong>Hollow grey dot:</strong> didn't check in.</li>
-        <li><strong>Bigger dots</strong> have more connections.</li>
+        <li>Each dot is a kid who was here, and the key under the picture says what each dot means. Bigger dots have more connections.</li>
+        <li>In a group with group-only reports, names are hidden and the dots are in a different order each session, so no kid can be picked out.</li>
+      </ul>
+      <h3>How kids felt about the group</h3>
+      <ul>
+        <li>Each belonging question gets its own average, with its scale, and how many kids answered and skipped it. Higher means closer or more included.</li>
+        <li>Skipped answers are left out, so they don't pull the average down.</li>
       </ul>
       <h3>Who to check on</h3>
-      <p>Kids who might need help connecting, with the most worrying first. Each one says why:</p>
-      <ul>
-        <li><strong>No connections this session and last session.</strong></li>
-        <li><strong>No connections this session.</strong></li>
-        <li><strong>Didn't fill in the check-in, and nobody said they connected with them.</strong> They may be fine, but there's no way to tell.</li>
-      </ul>
+      <p>Only shown if the group has leader support, and only on your screen. It's never in the report or the export.</p>
+      <h3>Explain these results</h3>
+      <p>Writes a short plain-English overview of the numbers, plus an idea for next time. Only group-level numbers are sent: no names or individual answers. Use it alongside what you saw, not instead of it.</p>
       <form method="dialog"><button>Close</button></form>
     </div>
   </dialog>
