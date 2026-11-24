@@ -49,6 +49,41 @@ export async function addPerson(groupId, name) {
   return data;
 }
 
+export async function renamePerson(personId, name) {
+  const { data, error } = await supabase
+    .from("people")
+    .update({ name })
+    .eq("id", personId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function removePerson(personId) {
+  // The database deletes a kid's attendance, answers and ticks along with
+  // the kid, without asking. So check first that there's nothing to lose.
+  // head: true asks only for the count, not the rows themselves.
+  const checks = await Promise.all([
+    supabase.from("attendance").select("*", { count: "exact", head: true }).eq("person_id", personId),
+    supabase.from("answers").select("*", { count: "exact", head: true }).eq("person_id", personId),
+    supabase.from("ticks").select("*", { count: "exact", head: true })
+      .or(`from_person.eq.${personId},to_person.eq.${personId}`),
+  ]);
+  for (const { count, error } of checks) {
+    if (error) throw error;
+    if (count > 0) {
+      throw new Error("This kid can't be removed because they have attendance, answers or ticks saved in a session. Removing them would delete that too.");
+    }
+  }
+
+  const { error } = await supabase
+    .from("people")
+    .delete()
+    .eq("id", personId);
+  if (error) throw error;
+}
+
 export async function listPeople(groupId) {
   const { data, error } = await supabase
     .from("people")

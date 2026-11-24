@@ -8,10 +8,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="top"><a href="groups.html">Connected</a></header>
+  <header class="top"><a href="groups.html">Connected</a><a class="help" href="welcome.html" aria-label="About Connected" title="About Connected">?</a></header>
   <main>
     <p class="muted">Loading...</p>
   </main>
+  <dialog id="tips" class="tips" aria-labelledby="tips-title">
+    <div>
+      <h2 id="tips-title">On this page</h2>
+      <p>A summary of this session for the group as a whole, to share with staff. It only shows what was actually collected.</p>
+      <h3>What's in it</h3>
+      <ul>
+        <li><strong>About this check-in:</strong> the date, activity, goal and what was asked.</li>
+        <li>How many kids attended, how many checked in, and for each question, how many answered and how many skipped.</li>
+        <li>Separate sections for who connected (if it was asked), how kids felt, activity feedback and the learning question. Learning answers are shown under the exact wording kids saw.</li>
+        <li>No names or flags, even if the group has leader support.</li>
+      </ul>
+      <h3>Staff notes</h3>
+      <ul>
+        <li>Use <strong>What will we try next?</strong> to record what you'll change, like showing the activity first. After trying it, fill in <strong>How did it go?</strong></li>
+        <li>Write about the group, not individual kids: the notes are included in the export.</li>
+      </ul>
+      <h3>Saving and sharing</h3>
+      <ul>
+        <li><strong>Download CSV</strong> gives the group-level numbers for a spreadsheet: no names, ids or individual answers.</li>
+        <li><strong>Print or save as PDF</strong> makes a clean copy of the report.</li>
+        <li><strong>Download GEXF</strong> saves the network for Gephi, one kind of connection per file.</li>
+      </ul>
+      <form method="dialog"><button>Close</button></form>
+    </div>
+  </dialog>
   <script type="module" src="report.js"></script>
+  <script type="module" src="tips.js"></script>
 </body>
 </html>

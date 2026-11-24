@@ -8,11 +8,32 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="top"><a href="groups.html">Connected</a></header>
+  <header class="top"><a href="groups.html">Connected</a><a class="help" href="welcome.html" aria-label="About Connected" title="About Connected">?</a></header>
   <main>
     <h1>Group</h1>
     <p class="muted">This screen gets built in Step 12 of docs/frontend-steps.md.</p>
   </main>
+  <dialog id="tips" class="tips" aria-labelledby="tips-title">
+    <div>
+      <h2 id="tips-title">On this page</h2>
+      <ol>
+        <li><strong>How this group uses Connected</strong> shows the choices you made for this group. You can switch to group-only reports at any time, but leader support can only be added before any kid checks in.</li>
+        <li>Scroll down to <strong>Kids</strong> to add kids to the group, one name at a time. Two kids can't share a name, so add a last initial if you need to, like "Sam P.". Groups that don't use names have no kids list.</li>
+        <li>To start a session, pick the date and activity, and add a note if you like. You can also add an <strong>activity goal</strong> (what kids should be able to do afterwards) and a <strong>learning question</strong> to ask at check-in. Both are optional.</li>
+        <li>Choose <strong>when kids check in</strong> and which <strong>questions</strong> to ask. Each question is labelled with what it asks: interaction, belonging, learning, activity feedback or context. For a group that meets regularly, keep the same questions and timing each time, so sessions can be compared.</li>
+        <li>Click <strong>Start session</strong> and the new session opens straight away. You've created your first session! Kick it off by ticking who's here. A single activity has just one check-in, so you set it up once.</li>
+        <li>Every session is listed under <strong>Sessions</strong>, newest first. Click one to open it again.</li>
+        <li>Once a regular group has two or more sessions, <strong>Compare sessions</strong> shows what changed.</li>
+      </ol>
+      <h3>Fixing the kids list</h3>
+      <ul>
+        <li><strong>Edit</strong> fixes a kid's name.</li>
+        <li><strong>Remove</strong> only shows for kids who aren't in any session yet: not ticked as here, not checked in, and not picked by another kid. That way, removing a kid never deletes anyone's check-in.</li>
+      </ul>
+      <form method="dialog"><button>Close</button></form>
+    </div>
+  </dialog>
   <script type="module" src="group.js"></script>
+  <script type="module" src="tips.js"></script>
 </body>
 </html>

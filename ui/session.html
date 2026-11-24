@@ -8,11 +8,39 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="top"><a href="groups.html">Connected</a></header>
+  <header class="top"><a href="groups.html">Connected</a><a class="help" href="welcome.html" aria-label="About Connected" title="About Connected">?</a></header>
   <main>
     <h1>Session</h1>
     <p class="muted">This screen gets built in Step 13 of docs/frontend-steps.md.</p>
   </main>
+  <dialog id="tips" class="tips" aria-labelledby="tips-title">
+    <div>
+      <h2 id="tips-title">On this page</h2>
+      <h3>Who's here</h3>
+      <ul>
+        <li>Tick each kid who came, or use <strong>Tick everyone</strong>, then click <strong>Save</strong>.</li>
+        <li>Only kids ticked as here count in the results. If a kid checks in but isn't ticked, their answers won't count until you tick them.</li>
+        <li>In a group without names, enter <strong>how many took part</strong> instead, so the report can show how many answered out of how many came.</li>
+      </ul>
+      <h3>Checking in</h3>
+      <ul>
+        <li>Kids scan the QR code with their phone's camera, or you can copy the link and send it to them.</li>
+        <li>For kids without a phone, <strong>Check in on this device</strong> lets them take turns on yours.</li>
+        <li>The check-ins list shows who hasn't checked in yet. Click <strong>Refresh</strong> to update it.</li>
+        <li>If a kid checks in twice, their new answers replace the old ones.</li>
+      </ul>
+      <h3>What the check-in asks</h3>
+      <ul>
+        <li><strong>What this check-in asks</strong> lists this session's questions, when kids check in, and the activity goal.</li>
+        <li>For the questions about other kids, kids can tap <strong>Nobody</strong>. Kids can also skip any question. A skipped answer stays blank: it never counts as "nobody" or as a low score.</li>
+        <li>You can change the learning question until the first kid checks in. After that it's locked, so every kid answers the same question.</li>
+      </ul>
+      <h3>Results</h3>
+      <p>Click <strong>See results</strong> for the numbers and the network picture, or <strong>Group report</strong> for a summary you can save, print or share with staff.</p>
+      <form method="dialog"><button>Close</button></form>
+    </div>
+  </dialog>
   <script type="module" src="session.js"></script>
+  <script type="module" src="tips.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 // The group screen: a group's kids and sessions, and starting a new session.
 // Open it as group.html?group=GROUP_ID.
-import { loadGroup, addPerson, startSession, setReportPrivacy } from "../core/data.js";
+import { loadGroup, addPerson, renamePerson, removePerson, startSession, setReportPrivacy } from "../core/data.js";
+import { hasData } from "../core/people.js";
 import { el, getParam, urlFor, showError, today, labelFor, kindTag, PROGRAM_TYPES, ACTIVITY_TYPES } from "./app.js";
 import { QUESTIONS, choosableQuestionIds, defaultQuestionIds, questionIdsFor } from "../core/questions.js";
 import {
@@ -221,30 +222,82 @@ function kidsSection() {
   // Only the list is redrawn after adding a kid, so the cursor stays in the
   // box for the next name.
   function showKids() {
-    list.replaceChildren(...byName(group.people).map((person) => el("li", {}, person.name)));
+    list.replaceChildren(...byName(group.people).map(kidRow));
     list.hidden = group.people.length === 0;
     empty.hidden = group.people.length > 0;
+  }
+
+  function kidRow(person) {
+    const row = el("li", { className: "row" });
+    const edit = el("button", { type: "button", className: "secondary" }, "Edit");
+    edit.onclick = () => {
+      const form = editForm(person);
+      row.replaceChildren(form);
+      form.querySelector("input").select();
+    };
+    // Only offered when there's nothing to lose. removePerson checks again,
+    // in case the kid checked in after this page loaded.
+    const remove = hasData(group, person.id)
+      ? null
+      : el("button", { type: "button", className: "secondary" }, "Remove");
+    if (remove) remove.onclick = () => onRemove(person, remove);
+
+    fill(row, el("span", {}, person.name), edit, remove);
+    return row;
+  }
+
+  function editForm(person) {
+    const input = el("input", { type: "text", value: person.name, required: true, "aria-label": `New name for ${person.name}` });
+    const warning = el("p", { className: "warning", hidden: true });
+    const save = el("button", { type: "submit" }, "Save");
+    const cancel = el("button", { type: "button", className: "secondary", onclick: showKids }, "Cancel");
+
+    async function onSave(event) {
+      event.preventDefault();
+      warning.hidden = true;
+      const trimmed = checkName(input, warning, person.id);
+      if (!trimmed) return;
+      if (trimmed === person.name) {
+        showKids();
+        return;
+      }
+
+      save.disabled = true;
+      try {
+        const saved = await renamePerson(person.id, trimmed);
+        person.name = saved.name;
+        showKids();
+      } catch (error) {
+        showError(error);
+        save.disabled = false;
+      }
+    }
+
+    return el("form", { className: "edit-kid", onsubmit: onSave },
+      input,
+      warning,
+      el("div", { className: "actions" }, save, cancel),
+    );
+  }
+
+  async function onRemove(person, button) {
+    if (!confirm(`Remove ${person.name}? This can't be undone.`)) return;
+    button.disabled = true;
+    try {
+      await removePerson(person.id);
+      group.people = group.people.filter((other) => other.id !== person.id);
+      showKids();
+    } catch (error) {
+      showError(error);
+      button.disabled = false;
+    }
   }
 
   async function onSubmit(event) {
     event.preventDefault();
     message.hidden = true;
-    const trimmed = name.value.trim();
-    if (!trimmed) {
-      name.value = "";
-      name.focus();
-      return;
-    }
-
-    // Two kids with the same name would get two identical buttons on the
-    // check-in screen.
-    const taken = group.people.some((person) => person.name.trim().toLowerCase() === trimmed.toLowerCase());
-    if (taken) {
-      message.textContent = `There's already a kid called ${trimmed}. Add a last initial, like "${trimmed} P.".`;
-      message.hidden = false;
-      name.focus();
-      return;
-    }
+    const trimmed = checkName(name, message);
+    if (!trimmed) return;
 
     // Stops pressing Enter twice from adding the same kid twice.
     button.disabled = true;
@@ -272,6 +325,30 @@ function kidsSection() {
       el("div", { className: "actions" }, button),
     ),
   );
+}
+
+// The same rules for adding and renaming a kid, so the two can't drift
+// apart. Gives back the trimmed name, or null after showing what's wrong.
+// skipId is the kid being renamed, so "ana" can become "Ana".
+function checkName(input, warning, skipId) {
+  const trimmed = input.value.trim();
+  if (!trimmed) {
+    input.value = "";
+    input.focus();
+    return null;
+  }
+
+  // Two kids with the same name would get two identical buttons on the
+  // check-in screen.
+  const taken = group.people.some((person) =>
+    person.id !== skipId && person.name.trim().toLowerCase() === trimmed.toLowerCase());
+  if (taken) {
+    warning.textContent = `There's already a kid called ${trimmed}. Add a last initial, like "${trimmed} P.".`;
+    warning.hidden = false;
+    input.focus();
+    return null;
+  }
+  return trimmed;
 }
 
 // Like replaceChildren, but skips null. The browser's own replaceChildren

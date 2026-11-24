@@ -5,10 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Connected</title>
   <link rel="icon" href="ui/favicon.svg">
-  <!-- The screens live in ui/, so the home page sends you to the first one. -->
-  <meta http-equiv="refresh" content="0; url=ui/groups.html">
+  <!-- The screens live in ui/. The first visit on a device opens the welcome
+       screen. After "Get started", the home page goes straight to the groups.
+       The "?" on every leader screen still opens the welcome screen. -->
+  <script>
+    let seen = false;
+    try {
+      seen = localStorage.getItem("connected-welcome-seen") === "yes";
+    } catch {
+      // Storage can be blocked (some private windows). Then show the welcome screen.
+    }
+    location.replace(seen ? "ui/groups.html" : "ui/welcome.html");
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=ui/welcome.html"></noscript>
 </head>
 <body>
-  <p><a href="ui/groups.html">Open the app</a></p>
+  <p><a href="ui/welcome.html">Open the app</a></p>
 </body>
 </html>
